@@ -1,0 +1,108 @@
+﻿medication_catalog_id,category_id,category_name_ko,ingredient_name_ko,ingredient_name_en,subgroup,potential_prn_context,candidate_level,review_status,korea_authorization_check,institutional_prn_use_verified,safety_review_note,source_scope
+SIM-MED-0001,PAIN,통증·발열,아세트아미노펜,acetaminophen,비오피오이드 진통·해열,통증/발열,basic,individual_review_pending,not_checked,no,용량·간기능·중복 성분 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0002,PAIN,통증·발열,이부프로펜,ibuprofen,NSAID,통증/발열,basic,individual_review_pending,not_checked,no,위장관 출혈·신기능 및 금기 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0003,PAIN,통증·발열,덱시부프로펜,dexibuprofen,NSAID,통증/발열,conditional,individual_review_pending,not_checked,no,제형·국내 품목 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0004,PAIN,통증·발열,나프록센,naproxen,NSAID,통증,conditional,individual_review_pending,not_checked,no,위장관·신기능 및 병용약 검토 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0005,PAIN,통증·발열,디클로페낙,diclofenac,NSAID,통증,conditional,individual_review_pending,not_checked,no,투여경로·금기 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0006,PAIN,통증·발열,케토롤락,ketorolac,NSAID,급성 통증,conditional,individual_review_pending,not_checked,no,투여기간·신기능·출혈 위험 검토 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0007,PAIN,통증·발열,트라마돌,tramadol,중추성 진통제,통증,conditional,individual_review_pending,not_checked,no,진정·호흡·상호작용 검토 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0008,PAIN,통증·발열,아세클로페낙,aceclofenac,NSAID,통증,conditional,individual_review_pending,not_checked,no,일반적으로 정기 투여도 가능; PRN 사용은 개별 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0009,PAIN,통증·발열,네포팜,nefopam,비오피오이드 진통제,통증,conditional,individual_review_pending,not_checked,no,금기·부작용·국내 품목 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0010,PAIN,통증·발열,프로파세타몰,propacetamol,해열진통제 전구약물,통증/발열,conditional,individual_review_pending,not_checked,no,국내 제형·허가 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0011,OPIOID,오피오이드 진통,모르핀,morphine,오피오이드,중증 통증,highrisk,individual_review_pending,not_checked,no,고위험 약물군; 별도 임상 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0012,OPIOID,오피오이드 진통,옥시코돈,oxycodone,오피오이드,중증 통증,highrisk,individual_review_pending,not_checked,no,고위험 약물군; 제형 혼동 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0013,OPIOID,오피오이드 진통,하이드로모르폰,hydromorphone,오피오이드,중증 통증,highrisk,individual_review_pending,not_checked,no,고위험 약물군; 제형·농도 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0014,OPIOID,오피오이드 진통,펜타닐,fentanyl,오피오이드,중증 통증,highrisk,individual_review_pending,not_checked,no,고위험 약물군; 제형별 용도 다름,class_level_only_ATC_ISMP_NICE
+SIM-MED-0015,OPIOID,오피오이드 진통,부프레노르핀,buprenorphine,오피오이드,통증,highrisk,individual_review_pending,not_checked,no,제형별 적응증·투여 형태 차이,class_level_only_ATC_ISMP_NICE
+SIM-MED-0016,OPIOID,오피오이드 진통,코데인,codeine,오피오이드,통증/기침,highrisk,individual_review_pending,not_checked,no,규제·진정·호흡 관련 확인 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0017,NAUSEA,오심·구토,온단세트론,ondansetron,5-HT3 길항제,오심/구토,basic,individual_review_pending,not_checked,no,적응증·QT 위험·경로 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0018,NAUSEA,오심·구토,그라니세트론,granisetron,5-HT3 길항제,오심/구토,conditional,individual_review_pending,not_checked,no,제형 및 적응증 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0019,NAUSEA,오심·구토,팔로노세트론,palonosetron,5-HT3 길항제,오심/구토,conditional,individual_review_pending,not_checked,no,통상 예방 용법과 PRN 구분 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0020,NAUSEA,오심·구토,메토클로프라미드,metoclopramide,위장관운동 촉진/항구토,오심/구토,basic,individual_review_pending,not_checked,no,추체외로 부작용·금기 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0021,NAUSEA,오심·구토,돔페리돈,domperidone,위장관운동 촉진/항구토,오심/구토,conditional,individual_review_pending,not_checked,no,QT 및 국내 허가 정보 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0022,NAUSEA,오심·구토,디멘히드리네이트,dimenhydrinate,항히스타민 항구토,오심/어지럼,conditional,individual_review_pending,not_checked,no,진정·항콜린성 부작용 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0023,NAUSEA,오심·구토,프로클로르페라진,prochlorperazine,페노티아진계 항구토,오심/구토,conditional,individual_review_pending,not_checked,no,국내 제형·유통 및 추체외로 위험 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0024,NAUSEA,오심·구토,프로메타진,promethazine,항히스타민/항구토,오심/구토,conditional,individual_review_pending,not_checked,no,주사제 안전성·진정 위험 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0025,BOWEL,변비,비사코딜,bisacodyl,자극성 하제,변비,basic,individual_review_pending,not_checked,no,제형·장폐색 금기 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0026,BOWEL,변비,락툴로오스,lactulose,삼투성 하제,변비,basic,individual_review_pending,not_checked,no,목적·병용약·복부 상태 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0027,BOWEL,변비,폴리에틸렌글리콜,polyethylene glycol,삼투성 하제,변비,basic,individual_review_pending,not_checked,no,제품·제형별 처방 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0028,BOWEL,변비,센나,senna,자극성 하제,변비,conditional,individual_review_pending,not_checked,no,제품별 구성·복용 지시 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0029,BOWEL,변비,도큐세이트,docusate,대변연화제,변비,conditional,individual_review_pending,not_checked,no,임상 근거와 지역별 제품 차이 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0030,BOWEL,변비,글리세린,glycerol,직장용 하제,변비,conditional,individual_review_pending,not_checked,no,직장 투여 형태 및 금기 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0031,BOWEL,변비,차전자피,psyllium,팽창성 하제,변비,conditional,individual_review_pending,not_checked,no,수분섭취·폐색 위험 고려,class_level_only_ATC_ISMP_NICE
+SIM-MED-0032,BOWEL,변비,수산화마그네슘,magnesium hydroxide,염류 하제/제산,변비/속쓰림,conditional,individual_review_pending,not_checked,no,신기능 및 전해질 관련 고려,class_level_only_ATC_ISMP_NICE
+SIM-MED-0033,DIARRHEA,설사,로페라미드,loperamide,장운동 억제,설사,basic,individual_review_pending,not_checked,no,감염성 설사 등 금기 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0034,DIARRHEA,설사,디오스멕타이트,diosmectite,장 흡착제,설사,conditional,individual_review_pending,not_checked,no,투여 간격·제품 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0035,DIARRHEA,설사,비스무트 서브살리실레이트,bismuth subsalicylate,위장관 증상 완화,설사/속쓰림,conditional,individual_review_pending,not_checked,no,국내 품목·살리실레이트 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0036,DIARRHEA,설사,라세카도트릴,racecadotril,장 분비 억제,설사,conditional,individual_review_pending,not_checked,no,국내 허가·대상군 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0037,GI,속쓰림·복부증상,시메티콘,simethicone,가스 제거제,복부 팽만,basic,individual_review_pending,not_checked,no,증상과 제품 제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0038,GI,속쓰림·복부증상,탄산칼슘,calcium carbonate,제산제,속쓰림,conditional,individual_review_pending,not_checked,no,신기능·상호작용 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0039,GI,속쓰림·복부증상,알긴산나트륨,sodium alginate,역류 관련 증상 완화,속쓰림/역류,conditional,individual_review_pending,not_checked,no,복합제 여부와 제품 구성 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0040,GI,속쓰림·복부증상,파모티딘,famotidine,H2 수용체 길항제,위산 관련 증상,conditional,individual_review_pending,not_checked,no,처방 주기·신기능 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0041,GI,속쓰림·복부증상,알루미늄·마그네슘 제산 복합제,aluminum hydroxide + magnesium hydroxide,제산 복합제,속쓰림,conditional,individual_review_pending,not_checked,no,성분 조합별 실물 품목 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0042,GI,속쓰림·복부증상,히오신부틸브로마이드,hyoscine butylbromide,진경제,복부 경련,conditional,individual_review_pending,not_checked,no,금기 및 국내 제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0043,GI,속쓰림·복부증상,디사이클로민,dicyclomine,항콜린성 진경제,복부 경련,conditional,individual_review_pending,not_checked,no,국내 품목·항콜린성 금기 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0044,GI,속쓰림·복부증상,플로로글루시놀,phloroglucinol,진경제,복부 경련,conditional,individual_review_pending,not_checked,no,국내 허가·제형 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0045,GI,속쓰림·복부증상,메베베린,mebeverine,진경제,복부 경련,conditional,individual_review_pending,not_checked,no,PRN 활용 여부는 개별 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0046,RESP,호흡곤란·기관지경련,살부타몰,salbutamol,속효성 베타2 작용제,기관지경련 증상,basic,individual_review_pending,not_checked,no,흡입 제형·급성도·프로토콜 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0047,RESP,호흡곤란·기관지경련,이프라트로피움,ipratropium,속효성 항콜린성 기관지확장제,기관지경련 증상,conditional,individual_review_pending,not_checked,no,흡입제형 및 적응증 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0048,RESP,호흡곤란·기관지경련,페노테롤,fenoterol,베타2 작용제,기관지경련 증상,conditional,individual_review_pending,not_checked,no,국내 제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0049,RESP,호흡곤란·기관지경련,테르부탈린,terbutaline,베타2 작용제,기관지경련 증상,conditional,individual_review_pending,not_checked,no,경로·국내 품목 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0050,RESP,호흡곤란·기관지경련,살부타몰·이프라트로피움 복합제,salbutamol + ipratropium,기관지확장 복합제,기관지경련 증상,conditional,individual_review_pending,not_checked,no,제품별 성분 함량 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0051,ALLERGY,알레르기·소양감,세티리진,cetirizine,2세대 항히스타민제,알레르기/소양감,basic,individual_review_pending,not_checked,no,제형·신기능 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0052,ALLERGY,알레르기·소양감,레보세티리진,levocetirizine,2세대 항히스타민제,알레르기/소양감,conditional,individual_review_pending,not_checked,no,제형·신기능 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0053,ALLERGY,알레르기·소양감,로라타딘,loratadine,2세대 항히스타민제,알레르기,conditional,individual_review_pending,not_checked,no,제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0054,ALLERGY,알레르기·소양감,펙소페나딘,fexofenadine,2세대 항히스타민제,알레르기,conditional,individual_review_pending,not_checked,no,병용약·제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0055,ALLERGY,알레르기·소양감,클로르페니라민,chlorpheniramine,1세대 항히스타민제,알레르기/소양감,basic,individual_review_pending,not_checked,no,진정·항콜린성 작용 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0056,ALLERGY,알레르기·소양감,덱스클로르페니라민,dexchlorpheniramine,1세대 항히스타민제,알레르기/소양감,conditional,individual_review_pending,not_checked,no,진정·제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0057,ALLERGY,알레르기·소양감,디펜히드라민,diphenhydramine,1세대 항히스타민제,알레르기/소양감,conditional,individual_review_pending,not_checked,no,진정·항콜린성 작용 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0058,ALLERGY,알레르기·소양감,히드록시진,hydroxyzine,1세대 항히스타민제,소양감/불안,conditional,individual_review_pending,not_checked,no,진정·QT 위험 고려,class_level_only_ATC_ISMP_NICE
+SIM-MED-0059,ALLERGY,알레르기·소양감,페니라민,pheniramine,1세대 항히스타민제,알레르기,conditional,individual_review_pending,not_checked,no,국내 제형·진정 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0060,COUGH,기침·가래,덱스트로메토르판,dextromethorphan,진해제,기침,basic,individual_review_pending,not_checked,no,병용 성분·상호작용 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0061,COUGH,기침·가래,레보드로프로피진,levodropropizine,진해제,기침,conditional,individual_review_pending,not_checked,no,제형·국내 품목 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0062,COUGH,기침·가래,벤프로페린,benproperine,진해제,기침,conditional,individual_review_pending,not_checked,no,국내 품목 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0063,COUGH,기침·가래,노스카핀,noscapine,진해제,기침,conditional,individual_review_pending,not_checked,no,국내 품목·제품 구성 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0064,COUGH,기침·가래,구아이페네신,guaifenesin,거담제,객담 관련 증상,conditional,individual_review_pending,not_checked,no,복합제 여부와 국내 품목 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0065,COUGH,기침·가래,암브록솔,ambroxol,점액용해/거담제,객담 관련 증상,conditional,individual_review_pending,not_checked,no,정기 처방과 PRN 구분 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0066,AGIT,불안·초조,로라제팜,lorazepam,벤조디아제핀,불안/초조,highrisk,individual_review_pending,not_checked,no,"진정·호흡억제·낙상 등 위험, 프로토콜 필요",class_level_only_ATC_ISMP_NICE
+SIM-MED-0067,AGIT,불안·초조,디아제팜,diazepam,벤조디아제핀,불안/초조,highrisk,individual_review_pending,not_checked,no,진정·호흡 관련 평가 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0068,AGIT,불안·초조,알프라졸람,alprazolam,벤조디아제핀,불안,conditional,individual_review_pending,not_checked,no,의존·진정 및 병용약 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0069,AGIT,불안·초조,할로페리돌,haloperidol,항정신병제,심한 초조,highrisk,individual_review_pending,not_checked,no,QT·추체외로·임상 평가 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0070,AGIT,불안·초조,올란자핀,olanzapine,항정신병제,초조,highrisk,individual_review_pending,not_checked,no,제형별 급성기 안전성·상호작용 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0071,AGIT,불안·초조,쿠에티아핀,quetiapine,항정신병제,초조 관련 상황,conditional,individual_review_pending,not_checked,no,기관 지침과 적응증 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0072,AGIT,불안·초조,리스페리돈,risperidone,항정신병제,초조 관련 상황,conditional,individual_review_pending,not_checked,no,정기 처방과 PRN 구분 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0073,SLEEP,불면,졸피뎀,zolpidem,비벤조디아제핀계 수면제,불면,conditional,individual_review_pending,not_checked,no,낙상·섬망·의존 위험,class_level_only_ATC_ISMP_NICE
+SIM-MED-0074,SLEEP,불면,조피클론,zopiclone,비벤조디아제핀계 수면제,불면,conditional,individual_review_pending,not_checked,no,국내 품목·진정 관련 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0075,SLEEP,불면,에스조피클론,eszopiclone,비벤조디아제핀계 수면제,불면,conditional,individual_review_pending,not_checked,no,국내 허가 및 제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0076,SLEEP,불면,트라조돈,trazodone,항우울제,불면 관련 상황,conditional,individual_review_pending,not_checked,no,적응증·용법·금기 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0077,SLEEP,불면,독실아민,doxylamine,1세대 항히스타민제,단기 불면,conditional,individual_review_pending,not_checked,no,항콜린성·진정 관련 고려,class_level_only_ATC_ISMP_NICE
+SIM-MED-0078,SLEEP,불면,멜라토닌,melatonin,수면 관련 제제,수면 문제,conditional,individual_review_pending,not_checked,no,제품·연령·PRN 적합성 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0079,MUSCLE,근육경련·근긴장,바클로펜,baclofen,중추성 근이완제,경직·근긴장,conditional,individual_review_pending,not_checked,no,갑작스런 중단 및 신기능 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0080,MUSCLE,근육경련·근긴장,티자니딘,tizanidine,중추성 근이완제,근경련,conditional,individual_review_pending,not_checked,no,저혈압·진정·상호작용 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0081,MUSCLE,근육경련·근긴장,에페리손,eperisone,근이완제,근긴장,conditional,individual_review_pending,not_checked,no,대개 정규 용법; PRN 적합성 별도 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0082,MUSCLE,근육경련·근긴장,메토카르바몰,methocarbamol,근이완제,근경련,conditional,individual_review_pending,not_checked,no,진정·경로·제품 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0083,HYPO,저혈당 대응,포도당 경구제,glucose (oral),당 보충,저혈당,conditional,individual_review_pending,not_checked,no,의식상태·투여경로·기관 프로토콜 필수,class_level_only_ATC_ISMP_NICE
+SIM-MED-0084,HYPO,저혈당 대응,덱스트로스 주사제,dextrose (intravenous),정맥용 당 보충,저혈당,highrisk,individual_review_pending,not_checked,no,농도에 따른 고위험 주사제 검토 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0085,HYPO,저혈당 대응,글루카곤,glucagon,고혈당유발 호르몬,저혈당,highrisk,individual_review_pending,not_checked,no,제형·투여경로·응급 프로토콜 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0086,RESCUE,응급·구조 약물,에피네프린,epinephrine,아드레날린 작용제,아나필락시스 등 응급 상황,highrisk,individual_review_pending,not_checked,no,고위험·응급 약물; 단순 PRN과 구분 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0087,RESCUE,응급·구조 약물,날록손,naloxone,오피오이드 길항제,오피오이드 관련 응급,highrisk,individual_review_pending,not_checked,no,응급 대응 프로토콜 및 모니터링 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0088,RESCUE,응급·구조 약물,플루마제닐,flumazenil,벤조디아제핀 길항제,특정 진정 관련 응급,highrisk,individual_review_pending,not_checked,no,금기·경련 위험·전문가 판단 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0089,RESCUE,응급·구조 약물,미다졸람,midazolam,벤조디아제핀,발작 구조/진정,highrisk,individual_review_pending,not_checked,no,발작 구조·진정 프로토콜 분리 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0090,CARDIO,심혈관·특수 프로토콜,니트로글리세린,nitroglycerin,질산염 제제,협심증 관련 상황,highrisk,individual_review_pending,not_checked,no,혈압·금기·제형·병용약 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0091,CARDIO,심혈관·특수 프로토콜,히드랄라진,hydralazine,혈관확장제,특정 혈압 관련 상황,highrisk,individual_review_pending,not_checked,no,무증상 혈압 상승에 일률적 PRN 적용 금지,class_level_only_ATC_ISMP_NICE
+SIM-MED-0092,CARDIO,심혈관·특수 프로토콜,라베타롤,labetalol,알파/베타 차단제,특정 혈압 관련 상황,highrisk,individual_review_pending,not_checked,no,주사제 위험·기관 프로토콜 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0093,CARDIO,심혈관·특수 프로토콜,클로니딘,clonidine,중추성 교감신경 억제제,특정 혈압 관련 상황,conditional,individual_review_pending,not_checked,no,저혈압·반동성 고혈압 및 임상 평가 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0094,CARDIO,심혈관·특수 프로토콜,메토프로롤,metoprolol,베타 차단제,일부 빈맥 관련 상황,highrisk,individual_review_pending,not_checked,no,주사제 고위험 가능; 리듬·혈압 상태 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0095,CARDIO,심혈관·특수 프로토콜,푸로세미드,furosemide,고리 이뇨제,일부 체액과다 관련 상황,conditional,individual_review_pending,not_checked,no,신기능·전해질·체액량 평가 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0096,CARDIO,심혈관·특수 프로토콜,아데노신,adenosine,항부정맥제,특정 빈맥 응급,highrisk,individual_review_pending,not_checked,no,응급 소생 환경과 프로토콜 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0097,PALL,완화의료·분비물,글리코피롤레이트,glycopyrrolate,항콜린성 약물,분비물 관리,conditional,individual_review_pending,not_checked,no,전문 진료 맥락에서 검토,class_level_only_ATC_ISMP_NICE
+SIM-MED-0098,PALL,완화의료·분비물,히오신하이드로브로마이드,hyoscine hydrobromide,항콜린성 약물,분비물 관리,conditional,individual_review_pending,not_checked,no,hyoscine butylbromide와 다른 성분·제형 주의,class_level_only_ATC_ISMP_NICE
+SIM-MED-0099,PALL,완화의료·분비물,아트로핀,atropine,항콜린성 약물,분비물 관리 등,highrisk,individual_review_pending,not_checked,no,제형·적응증 다양; 맥락별 검토 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0100,DERM,피부·국소 증상,히드로코르티손 외용제,hydrocortisone (topical),국소 스테로이드,피부 가려움/염증,conditional,individual_review_pending,not_checked,no,용법·부위·피부상태 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0101,DERM,피부·국소 증상,칼라민 로션,calamine,피부 보호제,가려움,conditional,individual_review_pending,not_checked,no,제품·국내 품목 검증 필요,class_level_only_ATC_ISMP_NICE
+SIM-MED-0102,DERM,피부·국소 증상,프라목신,pramoxine,국소 진통/항소양,가려움,conditional,individual_review_pending,not_checked,no,국내 허가·제품 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0103,DERM,피부·국소 증상,리도카인 국소제,lidocaine (topical),국소 마취제,국소 통증,conditional,individual_review_pending,not_checked,no,제품별 흡수·사용부위 제한 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0104,EYE,안구 건조·가려움,카르복시메틸셀룰로오스,carboxymethylcellulose,인공눈물,안구 건조,basic,individual_review_pending,not_checked,no,무보존제 여부·제품 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0105,EYE,안구 건조·가려움,히프로멜로오스,hypromellose,인공눈물,안구 건조,conditional,individual_review_pending,not_checked,no,제품·제형 확인,class_level_only_ATC_ISMP_NICE
+SIM-MED-0106,EYE,안구 건조·가려움,케토티펜 점안제,ketotifen (ophthalmic),안구 항알레르기제,알레르기성 눈 가려움,conditional,individual_review_pending,not_checked,no,제형과 허가 용법 검증,class_level_only_ATC_ISMP_NICE
+SIM-MED-0107,EYE,안구 건조·가려움,올로파타딘 점안제,olopatadine (ophthalmic),안구 항알레르기제,알레르기성 눈 가려움,conditional,individual_review_pending,not_checked,no,제품별 용법과 PRN 적합성 검토,class_level_only_ATC_ISMP_NICE
