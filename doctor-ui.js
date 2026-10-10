@@ -43,7 +43,14 @@
   });
   mode.addEventListener("change",updateMode);
   document.addEventListener("prn-data-ready",()=>{if(!panel.hidden)refresh();});
-  el("patientSelect").addEventListener("change",()=>{if(!panel.hidden)refresh();});
+  el("patientSelect").addEventListener("change",()=>{
+    // Prevent dose/route/time typed for a different patient from carrying over.
+    form.reset();
+    mode.value="regular";
+    updateMode();
+    info.textContent="환자가 변경되어 이전 환자의 미등록 처방 입력값을 초기화했습니다.";
+    if(!panel.hidden)refresh();
+  });
   form.addEventListener("submit",ev=>{
     ev.preventDefault();
     info.textContent="";
