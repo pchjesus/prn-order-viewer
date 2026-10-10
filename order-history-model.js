@@ -45,7 +45,9 @@
         if(next[key]!==candidate){next[key]=candidate;changed=true;}
       }
       requireValid(changed,"실제 변경된 항목이 없습니다.");
-      if(next.order_type==="prn")requireValid(text(next.indication,180)&&text(next.administration_condition,300),"PRN 조건을 확인해 주세요.");
+      if(next.order_type==="prn" && ("indication" in changes || "administration_condition" in changes))
+        requireValid(text(next.indication,180)&&text(next.administration_condition,300),"변경 대상 PRN의 적응증과 조건을 함께 확인해 주세요.");
+      // Legacy simulated PRN records can lack condition; do not invent it during dose/route/frequency-only edits.
     } else next.order_status=statusNext[action];
     next.order_revision=(current.order_revision||0)+1;
     next.last_modified_at=input.occurred_at;
