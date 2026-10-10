@@ -125,3 +125,7 @@
 .history-none{font-size:12px;color:#7e8ea3;margin-top:10px}
 @media(max-width:1000px){.app-main-layout{grid-template-columns:170px minmax(0,1fr)}.workspace{grid-template-columns:minmax(0,1fr)}.workspace[data-view="orders"]{grid-template-areas:"patient" "session" "orders" "detail"}}
 @media(max-width:700px){.app-main-layout{display:block}.workspace-sidebar{min-height:0;padding:12px;border-right:0;border-bottom:1px solid #d9e3ef}.sidebar-heading,.sidebar-footnote{display:none}.sidebar-links{flex-direction:row;overflow-x:auto;gap:5px;padding-bottom:3px}.sidebar-link{width:auto;white-space:nowrap;flex:none;font-size:11px;padding:10px}.sidebar-link.is-active{padding:9px}.workspace{padding:12px;grid-template-columns:minmax(0,1fr)}.history-form,.history-revision{grid-template-columns:1fr}}
+
+/* v0.4.1: navigation after successful prescription entry is a secondary action. */
+.composer-actions #composerViewOrder{background:#f4f8fc;color:#285d8b;border:1px solid #b5cbe2}
+.composer-actions #composerViewOrder:hover{background:#eaf3fb}
