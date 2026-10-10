@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>PRN Order Viewer v0.4 — 교육용</title>
+  <title>PRN Order Viewer v0.4.1 — 업무흐름 검증</title>
   <link rel="stylesheet" href="./styles.css">
   <script src="./app.js" defer></script>
   <script src="./order-composer.js" defer></script>
@@ -23,8 +23,8 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">+</span>
         <div>
-          <div class="brand-title">PRN Order Viewer <span class="version">v0.4</span></div>
-          <div class="brand-subtitle">가상 약물 처방 조회 · 독립형 교육 시뮬레이터</div>
+          <div class="brand-title">PRN Order Viewer <span class="version">v0.4.1</span></div>
+          <div class="brand-subtitle">가상 약물 처방 조회 · 임상업무 개선 연구용 프로토타입</div>
         </div>
       </div>
       <span class="demo-flag">DEMO · 실제 EMR 아님</span>
@@ -101,7 +101,7 @@
               <label class="composer-span2">기타 처방 지시 (선택)<textarea id="composerSpecial" maxlength="600" rows="2" placeholder="추가 관찰·시연 메모"></textarea></label>
             </div>
             <p class="composer-mode-hint" id="composerModeHint"></p>
-            <div class="composer-actions"><button type="submit" disabled>가상 약물처방 등록</button>
+            <div class="composer-actions"><button type="submit" disabled>가상 약물처방 등록</button><button id="composerViewOrder" type="button" hidden>등록한 처방 조회하기 →</button>
               <p id="composerMessage" role="status" aria-live="polite">등록하면 해당 환자의 전체 약물 또는 PRN 탭에 즉시 반영됩니다. **탭 메모리에만 보존**합니다.</p></div>
           </form>
         </div>
