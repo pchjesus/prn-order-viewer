@@ -1,0 +1,26 @@
+[
+  {
+    "event_id": "SIM-ACK-001",
+    "order_id": "SIM-ORD-000001",
+    "nurse_id": "SIM-RN-001",
+    "shift_id": "SIM-SHIFT-D",
+    "confirmed_at": "2026-10-10T08:40:00+09:00",
+    "action": "read_acknowledgement"
+  },
+  {
+    "event_id": "SIM-ACK-002",
+    "order_id": "SIM-ORD-000009",
+    "nurse_id": "SIM-RN-001",
+    "shift_id": "SIM-SHIFT-D",
+    "confirmed_at": "2026-10-10T09:00:00+09:00",
+    "action": "read_acknowledgement"
+  },
+  {
+    "event_id": "SIM-ACK-003",
+    "order_id": "SIM-ORD-000005",
+    "nurse_id": "SIM-RN-002",
+    "shift_id": "SIM-SHIFT-E",
+    "confirmed_at": "2026-10-10T18:00:00+09:00",
+    "action": "read_acknowledgement"
+  }
+]
