@@ -147,3 +147,31 @@
 2. Decide local data retention / order revision history policy before persistent doctor order storage or cancellations.
 3. Further review of order priority, laboratory specimen/container, dressings and linked nursing tasks before implementation.
 4. Other project chats receive integration-contract context, but independent code remains unchanged.
+
+## 2026-10-10 / v0.3.1 School worksheets and case-based order sheet
+
+### Reference analysis
+- Reviewed two user-provided school PDFs: ICN worklist (12p) and case-based practical training scenario (17p).
+- The latter includes Order Manage tables on pp. 5, 8, 11, 14; context pages present case overview and Kardex.
+- Modeled columns and grouped prescriptions; explicitly **not** copied original patient names, identifiers or hospital order codes.
+- Worksheet task context is separate from physician orders. Prescription timestamps are separate from scheduled administration timestamps.
+
+### Implemented
+- Created 4 new de-identified teaching case contexts with the existing 4 synthetic patient IDs; no alterations to existing patient data.
+- Added optional Kardex/skills-worklist information and grouped Order Manage style read-only panel.
+- Introduced `order-sheet-model.js` as view-independent grouping/validation logic and `order-sheet-ui.js` as replaceable presentation.
+- Daily dose/quantities and dose counts not available in the synthetic schema remain `미기재` without inference.
+- Reset unsaved physician order form values on selected-patient change.
+- App structure remains UI-change-friendly; no medical or nonmedication order generation was added.
+
+### Tests / verification
+- Existing PRN core 14, doctor composer 8, new sheet model 7 = **29/29 passed** on current repository JS in an isolated runtime.
+- MICU roster integration existing code untouched; its current full test suite was not rerun.
+- Actual UI with local HTTP browser not verified in this patch; user deferred visual review until final MVP.
+- GitHub original: 107 catalog candidates, 4 patient records, 18 seeded medication orders, verification events remained unchanged.
+
+### Next
+1. Implement prescription event history (new/add/change/hold/stop/DC) with separate immutable records and snapshots.
+2. Decide persistence/restore policy before user-editable durable events.
+3. Later add a separate domain for lab/service/procedure orders, specimen types and containers.
+4. Preserve PRN/nursing/MICU independent capabilities while developing a future common patient/staff/order reference standard.
