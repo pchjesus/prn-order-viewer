@@ -54,3 +54,31 @@
 - 동일 성분 내 다른 제형·함량의 관리 방식
 - 복잡한 처방 재발행/중지 이력 시뮬레이션
 - 기관별 실제 처방 코드 매핑 기능 (v0.1 제외)
+
+
+## v0.2 가상 환자·근무·확인 이력 확장 (2026-10-10)
+
+### Patient (`data/patients.json`)
+
+- `patient_id`, `display_name`, `age`, `sex`, `bed`, `admission_date`.
+- `primary_problem`, `medical_history[]`, `current_condition`, `care_note`.
+- **모든 필드가 가상**, 다른 시스템의 환자 식별자로 사용하지 않는다.
+
+### MedicationOrder (기존 JSON에 추가)
+
+- `prescriber_id`, `prescriber_name`, `ordered_at`: 개별 주문 시점의 가상 처방자 및 작성시각.
+- `dose_instruction`, `route_instruction`, `frequency_instruction`: v0.2 예시값 일부 입력. 과학적·임상적 개별 검증을 의미하지 않으며 미입력은 `null`.
+- `dose_review_status`: 모든 항목 `simulation_unverified`. **`is_clinically_complete=false` 유지**.
+
+### NurseShift (`data/staff_shifts.json`)
+
+- `shift_id`, `shift_label`, `nurse_id`, `nurse_name`, `login_id`.
+- `starts_at`, `ends_at`, `simulated_now`: 오프셋 포함 ISO 8601 문자열. `starts_at <= simulated_now < ends_at` 검사.
+- 로그인 선택은 UI 내 가상 계정 전환이므로 사용자 인증 기능이 **아님**.
+
+### ReadAcknowledgement (`data/verification_events.json`)
+
+- `event_id`, `order_id`, `nurse_id`, `shift_id`, `confirmed_at`, `action='read_acknowledgement'`.
+- `nurse_id`는 `shift_id`의 로그인 간호사와 반드시 일치, `confirmed_at`은 근무시간 안에 있어야 함.
+- 앱에서 새로 만드는 이벤트는 `session_only=true`; 입력 파일을 수정하지 않고 메모리에만 저장.
+- 처방정보 확인 ≠ 처방 승인 ≠ 투약 수행 기록. 모든 의사는 가상 이름/코드.
