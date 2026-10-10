@@ -55,7 +55,7 @@
       fail("근무표 구조를 확인할 수 없습니다.");
     }
     const activeId = data.meta.find(row => row?.id === "activeRosterId")?.value;
-    if (!activeId || typeof activeId !== "string") fail("MICU에서 '사용'으로 지정된 근무표가 없습니다.");
+    if (!activeId || typeof activeId !== "string") fail("MICU에서 '사용'(활성)으로 지정된 근무표가 없습니다.");
     const roster = data.rosters.find(row => row?.id === activeId);
     if (!roster || roster.year !== date.y || roster.month !== date.m) fail("선택한 날짜에 해당하는 활성 근무표가 없습니다.");
     const shifts = roster.shifts?.[String(date.d)];
