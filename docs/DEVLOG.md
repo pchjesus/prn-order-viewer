@@ -93,3 +93,29 @@
 - 시연용 용량·경로·빈도는 환자별 개별 의약품 제품 정보/기관 지침 검증을 수행하지 않았으므로 **실투약에 사용 불가**.
 - 모든 환자/직원/처방자 이름과 계정은 가상; 인증·권한/감사 이력 저장은 실제 병원 요건 충족하지 않음.
 - UX는 교체 가능. 데이터 모델과 표시 레이어를 분리해 향후 재구성하도록 권고.
+
+## 2026-10-10 / v0.2.1 MICU roster bridge (read-only)
+
+### Repository comparison
+- MICU v0.7.4 RC: active Excel roster & IndexedDB personnel state; full backup `micu-full-backup` v1 SHA-256.
+- PRN v0.2: synthetic patient/order data, simulated nurse sessions and order read acknowledgements.
+- Patient information does not belong in the MICU fire-evacuation staff assignment model; no patient dataset sync in this patch.
+
+### Patch
+- Added independent read-only MICU backup adapter (`roster-bridge.js`) and optional UI (`roster-bridge-ui.js`).
+- No changes to PRN `app.js`, `data/`, MICU source or IndexedDB.
+- Backup is explicitly selected and integrity-checked; uses active roster and selected date/duty; only nurses displayed.
+- Staff list is not used to impersonate or authenticate an RN and does not change PRN verification events.
+- Files ephemeral; no upload and no persistent storage. Private repo and local/Codespaces usage preserved.
+- Added integration risk review document, independent test fixtures and race protection on reset/selection changes.
+
+### Verification
+- Independent V8 pure-module fixture verified canonical MICU SHA-256 compatibility, D/E/N & NC mapping, modified/added/excluded staff, tampered backup rejection and wrong-month rejection.
+- `tests/roster-bridge.test.cjs` committed but full Node.js runner and real browser file picker are not confirmed in this environment.
+- Browser acceptance deferred per user request until integrated MVP maturity.
+
+### Follow-up proposals
+1. Replace full-backup import with privacy-minimizing date/duty staff-only export contract after separate impact assessment of MICU repository.
+2. Consider common pseudonymous staff identifiers, but do not equate roster presence with authentication.
+3. Do not duplicate patient data across apps until MICU genuinely requires patient-level evacuation workflow.
+4. Evaluate combined UI/modules only after isolated components and regression checks stabilize.
