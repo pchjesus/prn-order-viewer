@@ -132,7 +132,7 @@ if (typeof document !== "undefined") {
     getVisibleOrders, enrichOrders, getStatusKeys, escapeHTML: e } = PRNCore;
   const byId = id => document.getElementById(id);
   const state = { patientId: null, tab: "all", query: "", status: "all", selectedOrderId: null,
-    orders: [], patients: [], shifts: [], reviews: [], medCatalog: [], sessionShiftId: null, loading: true };
+    orders: [], patients: [], shifts: [], reviews: [], medCatalog: [], orderEvents: [], sessionShiftId: null, loading: true };
   const currentShift = () => state.shifts.find(s => s.shift_id === state.sessionShiftId);
   const formatTime = time => time ? String(time).replace("T", " ").replace(/\+09:00$/, " KST") : "미기재";
   const getNurseName = nurseId => state.shifts.find(s => s.nurse_id === nurseId)?.nurse_name ?? "가상 간호사 정보 없음";
@@ -193,6 +193,9 @@ if (typeof document !== "undefined") {
         ${field("모의 예정 시각", order.scheduled_at)}
         ${field("PRN 투여 조건", order.administration_condition, true)}
         ${field("처방 상태", htmlStatus(order.order_status))}
+        ${field("변경 버전", order.order_revision ? "수정 "+order.order_revision+"회" : "최초 처방")}
+        ${field("최종 변경자", order.last_modifier_name)}
+        ${field("최종 변경 시각", order.last_modified_at)}
         ${field("약물 분류", order.category_name_ko)}
         ${field("1회 용량", order.dose_instruction)}
         ${field("투여 경로", order.route_instruction)}
@@ -274,6 +277,7 @@ if (typeof document !== "undefined") {
       const [catalog, orders, patients, shifts, reviews] = await Promise.all(response.map(r => r.json()));
       validate(catalog, orders, patients, shifts, reviews);
       state.medCatalog = catalog;
+      state.orderEvents = [];
       state.orders = enrichOrders(catalog, orders);
       state.patients = patients; state.shifts = shifts; state.reviews = reviews;
       state.sessionShiftId = shifts[0]?.shift_id ?? null;
@@ -328,11 +332,32 @@ if (typeof document !== "undefined") {
         throw new Error("현재 환자와 연관되지 않거나 중복된 가상 처방입니다.");
       }
       validate(state.medCatalog,[order],state.patients);
-      state.orders.push(...enrichOrders(state.medCatalog,[order]));
+      const newOrder=enrichOrders(state.medCatalog,[order])[0];
+      const nextEvents=window.PRNHistoryModel.createAddEvent([...state.orders,newOrder],state.orderEvents,newOrder);
+      state.orders=[...state.orders,newOrder];
+      state.orderEvents=nextEvents;
       setTab(order.order_type==="prn" ? "prn" : "all");
       state.selectedOrderId=order.order_id;
       render();
+      document.dispatchEvent(new Event("prn-orders-changed"));
       return order.order_id;
+    },
+    getHistory: () => state.orderEvents.filter(x=>x.patient_id===state.patientId).map(x=>JSON.parse(JSON.stringify(x))),
+    updateOrder: input => {
+      if(state.loading)throw new Error("환자 데이터가 준비되지 않았습니다.");
+      if(!window.PRNHistoryModel)throw new Error("처방 변경 모듈을 불러오지 못했습니다.");
+      if(input.patient_id!==state.patientId)throw new Error("다른 환자에 대한 변경은 거부됩니다.");
+      const doctors=[...new Map(state.orders.filter(o=>o.prescriber_id&&o.prescriber_name)
+        .map(o=>[o.prescriber_id,{id:o.prescriber_id,name:o.prescriber_name}])).values()];
+      if(!doctors.some(d=>d.id===input.actor_id&&d.name===input.actor_name))throw new Error("유효하지 않은 가상 처방자입니다.");
+      const change=window.PRNHistoryModel.transition(state.orders,state.orderEvents,input);
+      validate(state.medCatalog,change.orders,state.patients,state.shifts,state.reviews);
+      state.orders=change.orders;
+      state.orderEvents=change.events;
+      state.selectedOrderId=input.order_id;
+      render();
+      document.dispatchEvent(new Event("prn-orders-changed"));
+      return change.event.event_id;
     }
   });
   byId("tabAll").addEventListener("click", () => setTab("all"));
