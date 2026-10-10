@@ -199,3 +199,30 @@
 
 ### Next
 - Review eventual persistent event storage policy with user, evaluate modular layout at final MVP, then implement separate lab/service/procedure order domains without merging all records.
+
+## 2026-10-10 / v0.4.1 stabilize clinical workflow prototype, not clinical deployment
+
+### User decisions
+- PRN system will act as potential center of a modular EMR spanning nursing orders and MICU.
+- Real hospital adoption/usefulness must guide future design; current app remains synthetic and unapproved for clinical use.
+- Future NANDA-I nursing diagnoses should use **verified official Korean translation**. Do not invent Korean official labels or copy licensed classification into the repository without authorization.
+- Continue planned v0.4.1 stabilization; defer unapproved persistent data retention implementation.
+
+### Changes
+- `order-history-model.js`: block out-of-order modification timestamps and record explicit event revisions.
+- `doctor-ui.js` and `index.html`: preserve selections while reopening same patient's draft, clear on patient change, provide direct order-list navigation after successful entry.
+- `app.js`: distinguish latest revision instructions from original order text; warn when no acknowledgement exists for current order revision.
+- `roster-bridge.js`: align missing active-roster error wording with existing tests.
+- `tests/stabilization-v0.4.1.test.cjs`: add regression coverage for chronology, version-specific RN checks, draft semantics, and action paths.
+- `docs/CLINICAL-READINESS-AND-NANDA-KO-v0.4.1.md`: reference edition, Korean label policy, licensing concerns, practical EMR safety/approval gates.
+
+### Verification boundary
+- 50/50 original core, physician composer, school case/order-sheet, history, sidebar, and stabilization test functions passed on current remote sources in isolated JS test harness.
+- Current MICU roster bridge test suite was separately rechecked; final results to be recorded after full execution.
+- No user-authenticated browser testing or actual GitHub Codespaces Node test command verified yet. Clinical safety, actual hospital deployment and information security accreditation are **not completed**.
+- Patient, medication catalog, base orders, preset nurse review events and MICU source remain unchanged.
+
+### Next
+- Finish v0.4.1 regression verification and remote change review.
+- Advance to v0.5 PRN dose/route/frequency structured fields after resolving storage/retention policy.
+- Only at later approved stages, implement nursing diagnosis and lab results following licensed Korean terminology/clinical reference verification.
