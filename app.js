@@ -179,6 +179,7 @@ if (typeof document !== "undefined") {
     }
     const reviews = getOrderReviews(state.reviews, order.order_id);
     const shift = currentShift();
+    const currentRevisionAcknowledged=reviews.some(x=>(x.order_revision??0)===(order.order_revision??0));
     const allowAck = canAcknowledge(order, shift) && !reviews.some(r => r.shift_id === shift.shift_id && r.confirmed_at === shift.simulated_now && (r.order_revision??0)===(order.order_revision??0));
     const reviewHistory = reviews.length
       ? reviews.map(r => `<div class="review-row"><strong>${e(getNurseName(r.nurse_id))}</strong><span>${e(formatTime(r.confirmed_at))}</span><small>열람 확인 · ${e(r.shift_id)} · 처방 버전 ${e(r.order_revision??0)}${(r.order_revision??0)!==(order.order_revision??0)?" · 이전 버전 확인":""}${r.session_only ? " · 현재 탭에서만 유지" : " · 예시 기록"}</small></div>`).join("")
@@ -188,6 +189,8 @@ if (typeof document !== "undefined") {
       <div class="detail-title">${e(order.ingredient_name_ko)}</div>
       <div class="detail-code">${e(order.order_id)} · ${e(order.medication_catalog_id)}</div>
       <div class="detail-badges">${badge(order.order_status)}<span class="type-chip">${modeText(order)} 처방</span></div>
+      ${order.order_revision ? '<div class="detail-alert">처방이 변경된 시뮬레이션 기록입니다. 아래 용량·경로·상태는 현재 버전이며, 하단 최초 입력 원문은 변경 전 내용일 수 있습니다.</div>' : ""}
+      ${order.order_revision && !currentRevisionAcknowledged ? '<div class="detail-alert">현재 변경 버전에 대한 간호사 열람 확인 기록이 없습니다. 과거 버전의 열람 이력과 구별해 주세요.</div>' : ""}
       <div class="detail-alert">용량·경로·간격은 화면 동작을 확인하기 위한 가상 예시이며 임상 검증을 받지 않았습니다. 빈 값은 미기재로 표시합니다. 실제 투약에 사용하지 마세요.</div>
       <div class="details-grid">
         ${field("가상 처방명", order.order_display_name, true)}
@@ -214,7 +217,7 @@ if (typeof document !== "undefined") {
         <button type="button" class="ack-button" id="ackButton" ${allowAck ? "" : "disabled"}>${allowAck ? "현재 로그인 간호사로 열람 확인" : "이 계정·시각에는 기록 불가 또는 이미 확인"}</button>
         <p class="review-description">새 확인 기록은 브라우저 탭에서만 유지되며 새로고침 시 초기화됩니다.</p>
       </div>
-      <div class="detail-section"><h3>가상 처방 원문</h3><div class="order-original">${e(order.original_order_text ?? "원문 미기재")}</div></div>
+      <div class="detail-section"><h3>최초 입력 처방 원문 · 버전 0</h3><p class="review-description">이 원문은 최초 입력 당시의 자료입니다. 처방 변경 이후에는 상단의 최신 처방정보와 다를 수 있으며 과거 원문을 최신 투약 지시로 사용해서는 안 됩니다.</p><div class="order-original">${e(order.original_order_text ?? "원문 미기재")}</div></div>
       <div class="detail-section"><h3>데이터 출처 및 검증 상태</h3>
         <div class="details-grid">${field("환자 ID", order.patient_id)}${field("자료 성격", "교육·시연용 가상 처방")}${field("성분 검증", order.review_status, true)}${field("테스트 시나리오", order.scenario_note, true)}</div>
       </div>
