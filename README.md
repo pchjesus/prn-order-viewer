@@ -1,4 +1,4 @@
-# PRN Order Viewer v0.2 — Synthetic EMR PRN Medication Viewer
+# PRN Order Viewer v0.2.1 — Synthetic EMR PRN Medication Viewer
 
 > **EDUCATIONAL PROTOTYPE / SYNTHETIC DATA ONLY**
 >
@@ -34,7 +34,7 @@ python -m http.server 8000
 ## 테스트
 
 ```bash
-node --test tests/core.test.cjs
+node --test tests/*.test.cjs
 ```
 
 개발 검증: 순수 JavaScript/데이터 구조 테스트 **14건 통과**. Chromium에서 HTML·CSS·JavaScript를 실행하고 로컬 가상 JSON을 주입한 **데스크톱/모바일 상호작용 확인**도 수행했다. 검증 환경의 네트워크 제한으로 실제 localhost HTTP 접속은 테스트하지 못했으므로 사용자 터미널에서 수동 실행 확인이 필요하다.
@@ -63,6 +63,25 @@ node --test tests/core.test.cjs
 3. 모의 로그인 근무조(D/E/N)를 변경하면 화면의 로그인 간호사·시각이 달라진다.
 4. 처방 상세에서 가상 처방자 및 이전 **열람 확인** 이력을 확인하고, 로그인된 모의 간호사로만 새 열람 확인을 기록한다.
 5. 새 기록은 **현재 브라우저 탭 메모리에만 남고 새로고침 시 사라진다**. 실제 로그인·서명·투약 승인·법적 기록이 아니다.
+
+## v0.2.1: MICU 근무표 읽기 전용 시범 연동
+
+MICU 화재대피 앱 v0.7.4 RC의 전체 백업 JSON을 **사용자가 선택한 경우에만** 읽어 활성 근무표의 날짜·D/E/N 근무 간호사 명단을 PRN 화면에서 미리 볼 수 있습니다.
+
+1. MICU 앱의 '전체 백업 · 복원' 메뉴에서 **비식별 교육용 자료만** 백업합니다. 병원 직원의 실제 개인정보나 내부 근무자료는 승인 없이 반출하거나 업로드하지 마세요.
+2. PRN 화면의 'MICU 근무표 연결' 영역에서 날짜·듀티 선택 후 JSON 파일을 선택하고 허용자료 확인에 체크합니다.
+3. 파일 형식과 MICU SHA-256 무결성 검사 후 **조회 전용 목록**만 표시합니다. 활성 근무표가 없거나 해당 날짜가 없으면 오류 안내가 나옵니다.
+4. 원본 백업 파일은 브라우저 내부에서만 처리하며 다른 서버에 전송하거나 브라우저 저장소에 기록하지 않습니다. 새로고침 또는 연결 초기화 후에는 목록이 남지 않습니다.
+5. **근무자 목록은 실제 로그인/간호사 본인 인증을 뜻하지 않습니다.** 기존 PRN 가상 로그인 및 처방 열람 확인 이력과 자동 연결하지 않습니다.
+
+이 연동은 두 앱의 **데이터베이스를 합치지 않으며**, MICU 저장소 코드·근무표/IndexedDB·PRN 환자/처방 데이터를 변경하지 않습니다. 구조 및 위험 검토: `docs/INTEGRATION-FEASIBILITY-v0.2.1.md`.
+
+새 파일:
+- `roster-bridge.js`: MICU 전체 백업 검증 및 근무표 읽기 전용 변환
+- `roster-bridge-ui.js`: PRN 화면 내 독립형 근무표 가져오기 영역
+- `tests/roster-bridge.test.cjs`: 가상 백업의 근무조·무결성·비간섭 테스트
+
+**테스트 상태:** 원본 MICU SHA-256 구현과 신규 브리지의 파일 검증/근무조 해석에 대한 독립 실행 검사를 수행했습니다. 신규 Node.js 테스트 파일은 등록했으며 전체 `node --test tests/*.test.cjs` 및 사용자 브라우저 연동 검증은 후속 실행이 필요합니다. 기존 PRN v0.2 테스트 14개는 당시 통과했습니다.
 
 ## 설계상 핵심
 
