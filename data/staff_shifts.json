@@ -1,0 +1,32 @@
+[
+  {
+    "shift_id": "SIM-SHIFT-D",
+    "shift_label": "주간 D (07:00–15:00)",
+    "nurse_id": "SIM-RN-001",
+    "nurse_name": "정하늘 RN",
+    "login_id": "sim.rn.day",
+    "starts_at": "2026-10-10T07:00:00+09:00",
+    "ends_at": "2026-10-10T15:00:00+09:00",
+    "simulated_now": "2026-10-10T10:30:00+09:00"
+  },
+  {
+    "shift_id": "SIM-SHIFT-E",
+    "shift_label": "오후 E (15:00–23:00)",
+    "nurse_id": "SIM-RN-002",
+    "nurse_name": "이서연 RN",
+    "login_id": "sim.rn.evening",
+    "starts_at": "2026-10-10T15:00:00+09:00",
+    "ends_at": "2026-10-10T23:00:00+09:00",
+    "simulated_now": "2026-10-10T18:30:00+09:00"
+  },
+  {
+    "shift_id": "SIM-SHIFT-N",
+    "shift_label": "야간 N (23:00–07:00)",
+    "nurse_id": "SIM-RN-003",
+    "nurse_name": "강유진 RN",
+    "login_id": "sim.rn.night",
+    "starts_at": "2026-10-10T23:00:00+09:00",
+    "ends_at": "2026-10-11T07:00:00+09:00",
+    "simulated_now": "2026-10-11T02:30:00+09:00"
+  }
+]
