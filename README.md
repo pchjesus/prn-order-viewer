@@ -1,4 +1,4 @@
-# PRN Order Viewer v0.1 — Synthetic EMR PRN Medication Viewer
+# PRN Order Viewer v0.2 — Synthetic EMR PRN Medication Viewer
 
 > **EDUCATIONAL PROTOTYPE / SYNTHETIC DATA ONLY**
 >
@@ -8,7 +8,7 @@
 
 ## 문제 및 목표
 
-가상 전체 약물 처방 목록에서 필요시(PRN) 약물 처방을 빠르게 식별하고 원문·누락값을 함께 확인하는 **읽기 전용 v0.1 웹앱**이다. 실제 nU 화면을 복제하거나 병원 시스템을 연동하지 않는다.
+가상 전체 약물 처방 목록에서 필요시(PRN) 약물 처방을 빠르게 식별하고 원문·누락값을 함께 확인하는 **가상 임상 시나리오와 처방 열람 확인 기능을 가진 v0.2 교육용 웹앱**이다. 실제 nU 화면을 복제하거나 병원 시스템을 연동하지 않는다.
 
 ## 조사 결과와 한계
 
@@ -16,7 +16,7 @@
 - 'PRN 후보'는 실제 임상 빈도·국내 품목 허가·nU 처방 존재·병원별 관행을 입증하는 말이 아니다.
 - **모든 후보의 개별 허가/제품/투여정보는 추가 검증 전(`individual_review_pending`)**.
 - 실제 약물 용량·간격·최대량, 처방 허용 여부 및 투여 판단은 기입하지 않음.
-- `simulated_orders_SCHEMA_ONLY.json`의 처방들은 UI 테스트용 불완전한 객체이며 **투약 가능한 처방 아님**.
+- `simulated_orders_SCHEMA_ONLY.json`의 처방은 **18건의 시연용 비임상 처방**이며, 일부 가상 용량·경로·간격이 입력되어 있지만 실제 환자별 처방 적합성은 검증되지 않았다. **투약 근거로 사용 금지**.
 
 ## 실행 방법 (Private 저장소 로컬/Codespaces 터미널)
 
@@ -37,7 +37,7 @@ python -m http.server 8000
 node --test tests/core.test.cjs
 ```
 
-개발 검증: 순수 JavaScript/데이터 구조 테스트 **8건 통과**. Chromium에서 HTML·CSS·JavaScript를 실행하고 로컬 가상 JSON을 주입한 **데스크톱/모바일 상호작용 확인**도 수행했다. 검증 환경의 네트워크 제한으로 실제 localhost HTTP 접속은 테스트하지 못했으므로 사용자 터미널에서 수동 실행 확인이 필요하다.
+개발 검증: 순수 JavaScript/데이터 구조 테스트 **14건 통과**. Chromium에서 HTML·CSS·JavaScript를 실행하고 로컬 가상 JSON을 주입한 **데스크톱/모바일 상호작용 확인**도 수행했다. 검증 환경의 네트워크 제한으로 실제 localhost HTTP 접속은 테스트하지 못했으므로 사용자 터미널에서 수동 실행 확인이 필요하다.
 
 ## 파일
 
@@ -50,7 +50,19 @@ node --test tests/core.test.cjs
 - `docs/DEVLOG.md`: 의사결정, 보류 사항, 진행상황
 - `docs/GITHUB-SETUP.md`: private 저장소 생성 및 후속 커밋 절차
 - `data/medication_catalog_candidates.csv` 및 `.json`: 후보 목록 원자료
-- `data/simulated_orders_SCHEMA_ONLY.json`: 필터/상태 검사용 불완전한 가상 처방
+- `data/simulated_orders_SCHEMA_ONLY.json`: 환자별 가상 처방 18건(가상 용량·경로·작성자·시각 포함)
+- `data/patients.json`: 환자 4명, 과거력·현재 병력·입원 시나리오
+- `data/staff_shifts.json`: D/E/N 근무조별 가상 로그인 간호사 3명과 모의 시각
+- `data/verification_events.json`: 가상 처방 열람 확인 이력 예시 3건
+- `docs/SPEC-v0.2.md`: 환자·처방·열람 확인 확장 설계와 제한
+
+## v0.2 사용 방법
+
+1. 환자 선택에서 가상 환자 4명 가운데 한 명을 선택하여 과거력·현재 병력을 확인한다.
+2. 전체 약물/PRN 약물 탭에서 해당 환자에 연결된 가상 처방을 조회한다.
+3. 모의 로그인 근무조(D/E/N)를 변경하면 화면의 로그인 간호사·시각이 달라진다.
+4. 처방 상세에서 가상 처방자 및 이전 **열람 확인** 이력을 확인하고, 로그인된 모의 간호사로만 새 열람 확인을 기록한다.
+5. 새 기록은 **현재 브라우저 탭 메모리에만 남고 새로고침 시 사라진다**. 실제 로그인·서명·투약 승인·법적 기록이 아니다.
 
 ## 설계상 핵심
 
@@ -72,10 +84,10 @@ node --test tests/core.test.cjs
 - 기획 및 자료 수집: **초기 목록 작성 완료**
 - 개별 약물 정보 임상 검증: **미완료**
 - UX 최종 확정: **완료(2026-10-10, 두 항목 반영)**
-- 앱 구현: **v0.1 핵심 조회 기능 구현 완료**
-- 자동 검증: **Node.js 8건 통과**, Chromium 데스크톱·모바일 가상 데이터 주입 테스트 통과
+- 앱 구현: **v0.2 환자별 시나리오·처방자·모의 근무조·열람 확인 기능 적용**
+- 자동 검증: **Node.js 14건 통과**, Chromium 데스크톱·모바일 가상 데이터 주입 테스트 통과
 - 실제 사용자 PC·Codespaces의 HTTP 서버 구동 및 시각 검토: **추가 확인 필요**
-- GitHub 원격: **Private 저장소(main)에 v0.1 소스·테스트·설계 문서 커밋·푸시**
+- GitHub 원격: **Private 저장소(main)에 v0.2 소스·데이터·테스트·설계 문서 반영**
 
 ## 참조 원칙
 
