@@ -48,7 +48,18 @@
     }
   }
   function configureAction(){
-    fields.hidden=action.value!=="revise";
+    const revise=action.value==="revise";
+    fields.hidden=!revise;
+    for(const input of fields.querySelectorAll("input")){
+      input.disabled=!revise;
+      input.required=revise;
+    }
+    if(revise){
+      const ctx=context(),o=ctx?.existing.find(x=>x.order_id===selector.value);
+      $("historyDose").value=o?.dose_instruction||"";
+      $("historyRoute").value=o?.route_instruction||"";
+      $("historyFrequency").value=o?.frequency_instruction||"";
+    }
   }
   function resetDraft(){
     form.reset();reason.value="";
@@ -87,8 +98,8 @@
     $("historyRoute").value=o?.route_instruction||"";
     $("historyFrequency").value=o?.frequency_instruction||"";
   });
-  document.addEventListener("prn-data-ready",()=>{refreshSelect();viewHistory();});
-  document.addEventListener("prn-orders-changed",()=>{refreshSelect();viewHistory();});
+  document.addEventListener("prn-data-ready",()=>{refreshSelect();configureAction();viewHistory();});
+  document.addEventListener("prn-orders-changed",()=>{refreshSelect();configureAction();viewHistory();});
   $("patientSelect")?.addEventListener("change",()=>{resetDraft();viewHistory();});
   refreshSelect();configureAction();
 })();
