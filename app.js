@@ -234,7 +234,7 @@ if (typeof document !== "undefined") {
       ${order.order_revision ? '<div class="detail-alert">처방이 변경된 시뮬레이션 기록입니다. 아래 용량·경로·상태는 현재 버전이며, 하단 최초 입력 원문은 변경 전 내용일 수 있습니다.</div>' : ""}
       ${order.order_revision && !currentRevisionAcknowledged ? '<div class="detail-alert">현재 변경 버전에 대한 간호사 열람 확인 기록이 없습니다. 과거 버전의 열람 이력과 구별해 주세요.</div>' : ""}
       ${stale.length?'<div class="detail-alert">일부 구조화 항목은 이전 버전 자료입니다. 현재 버전의 구조화 지시로 사용하지 마세요: '+e(stale.join(", "))+'</div>':""}
-      <div class="detail-alert">용량·경로·간격은 화면 동작을 확인하기 위한 가상 예시이며 임상 검증을 받지 않았습니다. 빈 값은 미기재로 표시합니다. 실제 투약에 사용하지 마세요.</div>
+      <div class="detail-alert">모든 용량·경로·간격은 임상 미검증 가상 예시입니다. 미기재 항목을 추정하거나 실제 투약에 사용하지 마세요.</div>
       ${prnBrief}
       <div class="details-grid">
         ${field("가상 처방명", order.order_display_name, true)}
@@ -242,7 +242,7 @@ if (typeof document !== "undefined") {
         ${field("처방 작성", formatTime(order.ordered_at), true)}
         ${field("모의 처방 우선순위", order.order_priority === "stat" ? "응급(STAT)" : "일반")}
         ${field("모의 예정 시각", order.scheduled_at)}
-        ${field("PRN 투여 조건", order.administration_condition, true)}
+        ${prn ? "" : field("PRN 투여 조건", order.administration_condition, true)}
         ${field("처방 상태", htmlStatus(order.order_status))}
         ${field("변경 버전", order.order_revision ? "수정 "+order.order_revision+"회" : "최초 처방")}
         ${field("최종 변경자", order.last_modifier_name)}
@@ -255,11 +255,11 @@ if (typeof document !== "undefined") {
         ${structured?field("구조화 빈도 / 간격 / 시각",currentField("schedule",scheduleSummary),true):""}
         ${structured?field("구조화 최대 지시",currentField("maximum",maxSummary),true):""}
         ${structured?field("구조화 PRN 조건",currentField("prn",structured.prn?[structured.prn.indication,structured.prn.condition].filter(Boolean).join(" / "):null),true):""}
-        ${field("1회 용량", order.dose_instruction)}
-        ${field("투여 경로", order.route_instruction)}
-        ${field("적응증", order.indication, true)}
-        ${field("투여 빈도·간격", order.frequency_instruction, true)}
-        ${field("최대량·횟수 지시", order.maximum_limit_instruction, true)}
+        ${prn ? "" : field("1회 용량", order.dose_instruction)}
+        ${prn ? "" : field("투여 경로", order.route_instruction)}
+        ${prn ? "" : field("적응증", order.indication, true)}
+        ${prn ? "" : field("투여 빈도·간격", order.frequency_instruction, true)}
+        ${prn ? "" : field("최대량·횟수 지시", order.maximum_limit_instruction, true)}
         ${field("특이사항", order.special_instruction, true)}
       </div>
       <div class="detail-section"><h3>처방 열람 확인 · 시뮬레이션</h3>
@@ -298,7 +298,7 @@ if (typeof document !== "undefined") {
        <div><strong>과거력:</strong> ${e(patient.medical_history.join(", "))} · <strong>관찰 초점:</strong> ${e(patient.care_note)}</div>` : "가상 환자 정보가 없습니다.";
     const shift = currentShift();
     byId("sessionContext").textContent = shift ? `로그인 ${shift.login_id} · ${shift.nurse_name} · 모의 현재 시각 ${formatTime(shift.simulated_now)}` : "로그인 세션을 선택해 주세요";
-    byId("viewNote").textContent = state.tab === "prn" ? "PRN 처방은 모든 상태를 표시하고 유효 처방을 먼저 배치합니다. 상태는 투약 가능 여부가 아닙니다." : "정규·PRN 약물 처방을 함께 표시합니다. PRN 탭을 눌러 필요한 처방만 모아 볼 수 있습니다.";
+    byId("viewNote").textContent = state.tab === "prn" ? "PRN 처방은 모든 상태를 표시하고 유효 처방을 먼저 배치합니다. 별도 조건이 없는 가상 처방은 상세에서 미기재로 표시합니다. 상태는 투약 가능 여부가 아닙니다." : "정규·PRN 약물 처방을 함께 표시합니다. PRN 탭을 눌러 필요한 처방만 모아 볼 수 있습니다.";
     byId("listFooter").textContent = `표시 ${visible.length}건 / 현재 탭 ${state.tab === "prn" ? prnTotal.length : total.length}건 · 상태 필터: ${state.status === "all" ? "전체" : htmlStatus(state.status)} · 모든 데이터는 임상 미검증 시연용 처방입니다.`;
     const body = byId("ordersBody");
     if (!visible.length) {
@@ -308,7 +308,7 @@ if (typeof document !== "undefined") {
       body.innerHTML = `<tr><td colspan="7" class="table-message">${e(msg)}</td></tr>`;
     } else {
       body.innerHTML = visible.map(o => `<tr tabindex="0" role="button" aria-label="${e(o.ingredient_name_ko)} 가상 처방 상세 보기" data-order-id="${e(o.order_id)}" class="${o.order_id === state.selectedOrderId ? "is-selected" : ""}">
-        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${modeText(o)}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span>${o.order_type==="prn"?`<span class="drug-sub prn-list-condition${miss(o.administration_condition)?" is-missing":""}">PRN 조건: ${miss(o.administration_condition)?"미기재":e(o.administration_condition)}</span>`:""}${o.order_revision>0?`<span class="drug-sub prn-list-revision">변경 버전 ${e(o.order_revision)} · 현재 지시 확인</span>`:""}</td>
+        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${modeText(o)}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span>${o.order_type==="prn"&&!miss(o.administration_condition)?`<span class="drug-sub prn-list-condition">PRN 조건: ${e(o.administration_condition)}</span>`:""}${o.order_revision>0?`<span class="drug-sub prn-list-revision">변경 버전 ${e(o.order_revision)} · 현재 지시 확인</span>`:""}</td>
         <td>${showVal(o.dose_instruction)}</td><td>${showVal(o.route_instruction)}</td><td>${showVal(o.indication)}</td><td>${showVal(o.frequency_instruction)}</td>
         <td><button type="button" class="detail-link" data-detail-id="${e(o.order_id)}" aria-label="${e(o.ingredient_name_ko)} 상세 보기">보기</button></td></tr>`).join("");
     }
