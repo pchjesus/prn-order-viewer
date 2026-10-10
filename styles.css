@@ -58,3 +58,32 @@
 @media(max-width:1100px){.composer-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.composer-panel{margin-bottom:12px}.composer-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.composer-panel{padding:13px}.composer-fields{grid-template-columns:1fr}.composer-span2{grid-column:auto}.composer-actions{display:block}.composer-actions p{margin-top:8px}}
+
+/* v0.3.1 education-inspired Kardex / order sheet. Read-only, replaceable view module. */
+.workspace{grid-template-areas:"patient patient" "summary summary" "session session" "roster roster" "composer composer" "sheet sheet" "orders detail"}
+.sheet-panel{grid-area:sheet;min-width:0;background:white;border:1px solid #d8e1ec;border-radius:12px;padding:15px 20px;box-shadow:0 2px 12px #21385508}
+.sheet-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.sheet-header strong{font-size:13px;color:#214669}
+.sheet-header p,.sheet-intro,.sheet-order-head p,.sheet-footnote{color:#657b92;font-size:11px;line-height:1.65;margin:7px 0}
+.sheet-header button{padding:10px 13px;border:1px solid #bdd0e5;background:#f2f6fc;color:#245b91;border-radius:8px;font-weight:750;font-size:11px;cursor:pointer}
+#sheetPanel[hidden]{display:none!important}
+.sheet-case{margin-top:12px;background:#f6f9fd;border:1px solid #dfe8f2;border-radius:9px;padding:13px 16px;font-size:11px;color:#38536e;line-height:1.7}
+.sheet-case h3,.sheet-order-head h3{font-size:13px;color:#214669;margin:0 0 8px}
+.sheet-case h4{font-size:11px;margin:10px 0 4px;color:#385d7b}
+.sheet-case ul{margin:5px 0 8px;padding-left:20px}
+.sheet-case p{margin:7px 0}
+.sheet-case .sheet-warning{color:#9b6836;font-size:10px}
+.sheet-order-head{margin-top:20px}
+.sheet-status{font-size:11px;color:#3d6487;font-weight:650;margin-top:8px}
+.sheet-table{display:grid;gap:12px;margin-top:11px}
+.sheet-group{border:1px solid #d8e1ed;border-radius:9px;overflow:hidden}
+.sheet-group h4{padding:10px 12px;font-size:11px;background:#eaf1f9;color:#315b80;margin:0;font-weight:750}
+.sheet-scroll{overflow-x:auto;max-width:100%}
+.sheet-data-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:10.5px}
+.sheet-data-table th,.sheet-data-table td{border:1px solid #e1e7f0;padding:9px 10px;white-space:nowrap;vertical-align:top;text-align:left}
+.sheet-data-table th{background:#f5f8fc;font-weight:750;color:#526a84}
+.sheet-data-table td{color:#354e66}
+.sheet-data-table td:nth-child(3),.sheet-data-table td:nth-child(8){white-space:normal;min-width:140px;max-width:220px}
+.sheet-footnote{color:#986c39}
+@media(max-width:850px){.workspace{grid-template-areas:none}.sheet-panel{margin-bottom:12px}}
+@media(max-width:550px){.sheet-panel{padding:12px}.sheet-header{align-items:flex-start}}
