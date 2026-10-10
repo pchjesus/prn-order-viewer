@@ -13,7 +13,7 @@ const PRNCore = (() => {
     unknown: { label: "상태 미확인", className: "other" }
   });
 
-  function validate(catalog, orders) {
+  function validate(catalog, orders, patients = null, shifts = null, reviews = null) {
     if (!Array.isArray(catalog) || !Array.isArray(orders)) throw new Error("약물 및 처방 자료 형식이 잘못되었습니다.");
     const medIDs = new Set();
     for (const med of catalog) {
@@ -26,12 +26,66 @@ const PRNCore = (() => {
     for (const order of orders) {
       if (!order || typeof order.order_id !== "string" || !order.order_id || orderIDs.has(order.order_id) ||
           typeof order.patient_id !== "string" || !order.patient_id || !medIDs.has(order.medication_catalog_id) ||
-          !["regular", "prn"].includes(order.order_type) || !order.order_status || !Object.hasOwn(STATUS, order.order_status)) {
+          !["regular", "prn"].includes(order.order_type) || !order.order_status || !Object.hasOwn(STATUS, order.order_status) ||
+          (patients !== null && (!order.prescriber_id || !order.prescriber_name || !Number.isFinite(Date.parse(order.ordered_at))))) {
         throw new Error("가상 처방에 잘못된 구분, 상태, 연결 또는 중복 ID가 있습니다.");
       }
       orderIDs.add(order.order_id);
     }
+    if (patients !== null) {
+      if (!Array.isArray(patients)) throw new Error("가상 환자 목록 형식 오류");
+      const ids = new Set();
+      for (const patient of patients) {
+        if (!patient?.patient_id || ids.has(patient.patient_id) || !patient.display_name) throw new Error("가상 환자 ID 또는 표시명 오류");
+        ids.add(patient.patient_id);
+      }
+      if (orders.some(order => !ids.has(order.patient_id))) throw new Error("처방에서 존재하지 않는 환자를 참조합니다.");
+    }
+    if (shifts !== null) {
+      if (!Array.isArray(shifts)) throw new Error("가상 근무정보 형식 오류");
+      const ids = new Set();
+      for (const sh of shifts) {
+        if (!sh?.shift_id || ids.has(sh.shift_id) || !sh.nurse_id || !sh.login_id || !sh.simulated_now ||
+            !(Date.parse(sh.starts_at) <= Date.parse(sh.simulated_now) && Date.parse(sh.simulated_now) < Date.parse(sh.ends_at))) {
+          throw new Error("간호사 로그인/근무시간 데이터 오류");
+        }
+        ids.add(sh.shift_id);
+      }
+    }
+    if (reviews !== null) {
+      if (!Array.isArray(reviews) || !Array.isArray(shifts)) throw new Error("처방 확인 이력 형식 오류");
+      const ids = new Set();
+      for (const event of reviews) {
+        const sh = shifts.find(x => x.shift_id === event.shift_id);
+        if (!event?.event_id || ids.has(event.event_id) || !orderIDs.has(event.order_id) ||
+            !sh || event.nurse_id !== sh.nurse_id || event.action !== "read_acknowledgement" ||
+            !(Date.parse(sh.starts_at) <= Date.parse(event.confirmed_at) && Date.parse(event.confirmed_at) < Date.parse(sh.ends_at))) {
+          throw new Error("처방 확인 이력의 간호사/근무시간/처방 연결 오류");
+        }
+        ids.add(event.event_id);
+      }
+    }
     return true;
+  }
+
+  function canAcknowledge(order, shift) {
+    return Boolean(order && shift?.nurse_id && shift?.login_id &&
+      Date.parse(shift.starts_at) <= Date.parse(shift.simulated_now) &&
+      Date.parse(shift.simulated_now) < Date.parse(shift.ends_at) &&
+      (!order.ordered_at || Date.parse(order.ordered_at) <= Date.parse(shift.simulated_now)));
+  }
+
+  function appendAcknowledge(events, order, shift) {
+    if (!Array.isArray(events) || !canAcknowledge(order, shift)) throw new Error("현재 로그인/근무 시간에는 확인을 기록할 수 없습니다.");
+    if (events.some(x => x.order_id === order.order_id && x.shift_id === shift.shift_id && x.nurse_id === shift.nurse_id && x.confirmed_at === shift.simulated_now)) {
+      throw new Error("현재 가상 근무 세션에서 이미 확인한 처방입니다.");
+    }
+    return [...events, {event_id:`SIM-ACK-LIVE-${events.length + 1}`,order_id:order.order_id,nurse_id:shift.nurse_id,
+      shift_id:shift.shift_id,confirmed_at:shift.simulated_now,action:"read_acknowledgement",session_only:true}];
+  }
+
+  function getOrderReviews(reviews, orderId) {
+    return (reviews || []).filter(x => x.order_id === orderId).slice().sort((a,b) => Date.parse(b.confirmed_at)-Date.parse(a.confirmed_at));
   }
 
   function getVisibleOrders(orders, { patientId, tab = "all", query = "", status = "all" } = {}) {
@@ -67,20 +121,22 @@ const PRNCore = (() => {
   function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   }
-  return { STATUS, validate, getVisibleOrders, enrichOrders, distinctPatientIds, getStatusKeys, escapeHTML };
+  return { STATUS, validate, canAcknowledge, appendAcknowledge, getOrderReviews,
+    getVisibleOrders, enrichOrders, distinctPatientIds, getStatusKeys, escapeHTML };
 })();
 
 if (typeof module !== "undefined" && module.exports) module.exports = PRNCore;
 
 if (typeof document !== "undefined") {
-  const { STATUS, validate, getVisibleOrders, enrichOrders, distinctPatientIds, getStatusKeys, escapeHTML: e } = PRNCore;
+  const { STATUS, validate, canAcknowledge, appendAcknowledge, getOrderReviews,
+    getVisibleOrders, enrichOrders, getStatusKeys, escapeHTML: e } = PRNCore;
   const byId = id => document.getElementById(id);
-  const state = { patientId: null, tab: "all", query: "", status: "all", selectedOrderId: null, orders: [], loading: true };
-  const PATIENT_LABELS = {
-    "DEMO-P001": "가상 환자 A · 혼합 처방",
-    "DEMO-P002": "가상 환자 B · PRN 없음",
-    "DEMO-P003": "가상 환자 C · 상태/중복 검증"
-  };
+  const state = { patientId: null, tab: "all", query: "", status: "all", selectedOrderId: null,
+    orders: [], patients: [], shifts: [], reviews: [], sessionShiftId: null, loading: true };
+  const currentShift = () => state.shifts.find(s => s.shift_id === state.sessionShiftId);
+  const formatTime = time => time ? String(time).replace("T", " ").replace(/\+09:00$/, " KST") : "미기재";
+  const getNurseName = nurseId => state.shifts.find(s => s.nurse_id === nurseId)?.nurse_name ?? "가상 간호사 정보 없음";
+  const lastReview = orderId => getOrderReviews(state.reviews, orderId)[0];
   const miss = val => val === null || val === undefined || String(val).trim() === "";
   const showVal = val => miss(val) ? '<span class="missing">미기재 · 미검증</span>' : e(val);
   const badge = status => { const s = STATUS[status] || STATUS.unknown; return `<span class="status-chip ${s.className}">${e(s.label)}</span>`; };
@@ -116,14 +172,22 @@ if (typeof document !== "undefined") {
       content.innerHTML = '<div class="detail-placeholder"><div class="placeholder-icon" aria-hidden="true">▤</div><strong>처방을 선택해 주세요</strong><p>목록에서 한 건을 선택하면 가상 처방의 상세정보와 원문을 확인할 수 있습니다.</p></div>';
       return;
     }
+    const reviews = getOrderReviews(state.reviews, order.order_id);
+    const shift = currentShift();
+    const allowAck = canAcknowledge(order, shift) && !reviews.some(r => r.shift_id === shift.shift_id && r.confirmed_at === shift.simulated_now);
+    const reviewHistory = reviews.length
+      ? reviews.map(r => `<div class="review-row"><strong>${e(getNurseName(r.nurse_id))}</strong><span>${e(formatTime(r.confirmed_at))}</span><small>열람 확인 · ${e(r.shift_id)}${r.session_only ? " · 현재 탭에서만 유지" : " · 예시 기록"}</small></div>`).join("")
+      : '<p class="review-empty">열람 확인 기록 없음</p>';
     const field = (label, val, full = false) => `<div class="detail-field${full ? " full" : ""}"><span class="detail-label">${e(label)}</span><span class="detail-value">${showVal(val)}</span></div>`;
     content.innerHTML = `
       <div class="detail-title">${e(order.ingredient_name_ko)}</div>
       <div class="detail-code">${e(order.order_id)} · ${e(order.medication_catalog_id)}</div>
       <div class="detail-badges">${badge(order.order_status)}<span class="type-chip">${order.order_type === "prn" ? "PRN" : "정규"} 처방</span></div>
-      <div class="detail-alert">${order.is_clinically_complete === false ? "용량·경로·간격 등 핵심 투약정보가 미입력된 스키마 테스트 자료입니다. 투약에 사용하지 마세요." : "교육용 가상 데이터입니다. 실제 투약 판단에 사용하지 마세요."}</div>
+      <div class="detail-alert">용량·경로·간격은 화면 동작을 확인하기 위한 가상 예시이며 임상 검증을 받지 않았습니다. 빈 값은 미기재로 표시합니다. 실제 투약에 사용하지 마세요.</div>
       <div class="details-grid">
         ${field("가상 처방명", order.order_display_name, true)}
+        ${field("처방자", `${order.prescriber_name || "미기재"} (${order.prescriber_id || "ID 없음"})`,true)}
+        ${field("처방 작성", formatTime(order.ordered_at), true)}
         ${field("처방 상태", htmlStatus(order.order_status))}
         ${field("약물 분류", order.category_name_ko)}
         ${field("1회 용량", order.dose_instruction)}
@@ -133,11 +197,22 @@ if (typeof document !== "undefined") {
         ${field("최대량·횟수 지시", order.maximum_limit_instruction, true)}
         ${field("특이사항", order.special_instruction, true)}
       </div>
+      <div class="detail-section"><h3>처방 열람 확인 · 시뮬레이션</h3>
+        <p class="review-description">열람 확인은 실제 처방 승인·투약 허용을 뜻하지 않습니다. 확인자 ID는 선택한 가상 로그인 간호사 계정에서 자동 지정됩니다.</p>
+        <div class="review-history">${reviewHistory}</div>
+        <button type="button" class="ack-button" id="ackButton" ${allowAck ? "" : "disabled"}>${allowAck ? "현재 로그인 간호사로 열람 확인" : "이 계정·시각에는 기록 불가 또는 이미 확인"}</button>
+        <p class="review-description">새 확인 기록은 브라우저 탭에서만 유지되며 새로고침 시 초기화됩니다.</p>
+      </div>
       <div class="detail-section"><h3>가상 처방 원문</h3><div class="order-original">${e(order.original_order_text ?? "원문 미기재")}</div></div>
       <div class="detail-section"><h3>데이터 출처 및 검증 상태</h3>
         <div class="details-grid">${field("환자 ID", order.patient_id)}${field("자료 성격", "교육·시연용 가상 처방")}${field("성분 검증", order.review_status, true)}${field("테스트 시나리오", order.scenario_note, true)}</div>
       </div>
-      <p class="detail-footnote">처방의 '유효' 표시는 지금 투약해도 된다는 의미가 아닙니다. 실제 약물정보·처방 조건과 투여 적합성은 검증되지 않았습니다.</p>`;
+      <p class="detail-footnote">가상 약물 용량·투여 경로·간격은 교육용 화면 예시로, 개별 환자·제품에 대한 처방 적정성 검증을 거치지 않았습니다. 처방의 '유효' 표시는 지금 투약해도 된다는 의미가 아닙니다.</p>`;
+    const button = byId("ackButton");
+    if (button && allowAck) button.addEventListener("click", () => {
+      try { state.reviews = appendAcknowledge(state.reviews, order, currentShift()); render(); }
+      catch (error) { window.alert(error.message); }
+    });
   }
 
   function render() {
@@ -150,9 +225,16 @@ if (typeof document !== "undefined") {
     byId("allCount").textContent = String(total.length);
     byId("prnCount").textContent = String(prnTotal.length);
     byId("visibleCount").textContent = `${visible.length}건`;
-    byId("patientContext").textContent = `${state.patientId} · 전체 ${total.length}건 / PRN ${prnTotal.length}건`;
+    const patient = state.patients.find(p => p.patient_id === state.patientId);
+    byId("patientContext").textContent = `${patient ? patient.display_name : state.patientId} · 전체 ${total.length}건 / PRN ${prnTotal.length}건`;
+    byId("patientSummary").innerHTML = patient ?
+      `<div><strong>${e(patient.display_name)} (${e(patient.patient_id)})</strong> · ${e(patient.age)}세 / ${e(patient.sex)} · ${e(patient.bed)} · 입원 ${e(patient.admission_date)}</div>
+       <div><strong>현재 병력:</strong> ${e(patient.primary_problem)} — ${e(patient.current_condition)}</div>
+       <div><strong>과거력:</strong> ${e(patient.medical_history.join(", "))} · <strong>관찰 초점:</strong> ${e(patient.care_note)}</div>` : "가상 환자 정보가 없습니다.";
+    const shift = currentShift();
+    byId("sessionContext").textContent = shift ? `로그인 ${shift.login_id} · ${shift.nurse_name} · 모의 현재 시각 ${formatTime(shift.simulated_now)}` : "로그인 세션을 선택해 주세요";
     byId("viewNote").textContent = state.tab === "prn" ? "PRN 처방은 모든 상태를 표시하고 유효 처방을 먼저 배치합니다. 상태는 투약 가능 여부가 아닙니다." : "정규·PRN 약물 처방을 함께 표시합니다. PRN 탭을 눌러 필요한 처방만 모아 볼 수 있습니다.";
-    byId("listFooter").textContent = `표시 ${visible.length}건 / 현재 탭 ${state.tab === "prn" ? prnTotal.length : total.length}건 · 상태 필터: ${state.status === "all" ? "전체" : htmlStatus(state.status)} · 모든 데이터는 미완성 교육용 처방입니다.`;
+    byId("listFooter").textContent = `표시 ${visible.length}건 / 현재 탭 ${state.tab === "prn" ? prnTotal.length : total.length}건 · 상태 필터: ${state.status === "all" ? "전체" : htmlStatus(state.status)} · 모든 데이터는 임상 미검증 시연용 처방입니다.`;
     const body = byId("ordersBody");
     if (!visible.length) {
       const msg = total.length === 0 ? "이 환자에 대한 가상 처방이 없습니다." :
@@ -161,7 +243,7 @@ if (typeof document !== "undefined") {
       body.innerHTML = `<tr><td colspan="7" class="table-message">${e(msg)}</td></tr>`;
     } else {
       body.innerHTML = visible.map(o => `<tr tabindex="0" role="button" aria-label="${e(o.ingredient_name_ko)} 가상 처방 상세 보기" data-order-id="${e(o.order_id)}" class="${o.order_id === state.selectedOrderId ? "is-selected" : ""}">
-        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${o.order_type === "prn" ? "PRN" : "정규"}</span></td>
+        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${o.order_type === "prn" ? "PRN" : "정규"}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span></td>
         <td>${showVal(o.dose_instruction)}</td><td>${showVal(o.route_instruction)}</td><td>${showVal(o.indication)}</td><td>${showVal(o.frequency_instruction)}</td>
         <td><button type="button" class="detail-link" data-detail-id="${e(o.order_id)}" aria-label="${e(o.ingredient_name_ko)} 상세 보기">보기</button></td></tr>`).join("");
     }
@@ -181,21 +263,29 @@ if (typeof document !== "undefined") {
   async function loadData() {
     byId("ordersBody").innerHTML = '<tr><td colspan="7" class="table-message">가상 데이터를 불러오는 중…</td></tr>';
     try {
-      const urls = ["./data/medication_catalog_candidates.json", "./data/simulated_orders_SCHEMA_ONLY.json"];
+      const urls = ["./data/medication_catalog_candidates.json", "./data/simulated_orders_SCHEMA_ONLY.json",
+        "./data/patients.json", "./data/staff_shifts.json", "./data/verification_events.json"];
       const response = await Promise.all(urls.map(url => fetch(url, { cache: "no-store" })));
       if (response.some(r => !r.ok)) throw new Error("가상 데이터 파일을 찾을 수 없습니다.");
-      const [catalog, orders] = await Promise.all(response.map(r => r.json()));
-      validate(catalog, orders);
+      const [catalog, orders, patients, shifts, reviews] = await Promise.all(response.map(r => r.json()));
+      validate(catalog, orders, patients, shifts, reviews);
       state.orders = enrichOrders(catalog, orders);
-      const patients = distinctPatientIds(state.orders);
-      state.patientId = patients[0] ?? null;
+      state.patients = patients; state.shifts = shifts; state.reviews = reviews;
+      state.sessionShiftId = shifts[0]?.shift_id ?? null;
+      const patientIds = patients.map(p => p.patient_id);
+      state.patientId = patientIds[0] ?? null;
       state.tab = "all"; state.status = "all"; state.query = ""; state.selectedOrderId = null;
       byId("searchInput").value = "";
       const picker = byId("patientSelect");
       picker.replaceChildren();
-      for (const id of patients) picker.add(new Option(`${PATIENT_LABELS[id] ?? "가상 환자"} (${id})`, id));
+      for (const patient of patients) picker.add(new Option(`${patient.display_name} · ${patient.bed} (${patient.patient_id})`, patient.patient_id));
+      const sessionPicker = byId("sessionSelect");
+      sessionPicker.replaceChildren();
+      for (const shift of shifts) sessionPicker.add(new Option(`${shift.shift_label} · ${shift.nurse_name}`, shift.shift_id));
+      sessionPicker.value = state.sessionShiftId;
       picker.value = state.patientId;
       picker.disabled = patients.length === 0;
+      sessionPicker.disabled = shifts.length === 0;
       byId("searchInput").disabled = false;
       byId("statusFilter").disabled = false;
       byId("tabAll").disabled = false;
@@ -213,6 +303,7 @@ if (typeof document !== "undefined") {
 
   byId("tabAll").addEventListener("click", () => setTab("all"));
   byId("tabPrn").addEventListener("click", () => setTab("prn"));
+  byId("sessionSelect").addEventListener("change", ev => { state.sessionShiftId = ev.target.value; render(); });
   byId("patientSelect").addEventListener("change", ev => {
     state.patientId = ev.target.value;
     state.tab = "all";
