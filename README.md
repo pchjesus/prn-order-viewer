@@ -1,4 +1,4 @@
-# PRN Order Viewer v0.2.1 — Synthetic EMR PRN Medication Viewer
+# PRN Order Viewer v0.3 — Synthetic EMR PRN Medication Viewer
 
 > **EDUCATIONAL PROTOTYPE / SYNTHETIC DATA ONLY**
 >
@@ -41,7 +41,9 @@ node --test tests/*.test.cjs
 
 ## 파일
 
-- `index.html`, `styles.css`, `app.js`: 정적 읽기 전용 웹앱
+- `index.html`, `styles.css`, `app.js`: 정적 조회 웹앱, 간호사 조회는 읽기 전용
+- `order-composer.js`, `doctor-ui.js`: 가상의사 약물 처방 입력 및 임시 등록
+- `tests/order-composer.test.cjs`: 가상의사 입력 기능 테스트
 - `tests/core.test.cjs`: 데이터/필터/정렬/예외 로직의 Node.js 테스트
 - `docs/SPEC-v0.1.md`: 목적, 기능/비기능 요구사항, 상태·UX 초안, 수용 기준
 - `docs/DATA-DICTIONARY.md`: 약물 마스터와 처방의 분리, 가상 코드 체계, 스키마 필드
@@ -63,6 +65,23 @@ node --test tests/*.test.cjs
 3. 모의 로그인 근무조(D/E/N)를 변경하면 화면의 로그인 간호사·시각이 달라진다.
 4. 처방 상세에서 가상 처방자 및 이전 **열람 확인** 이력을 확인하고, 로그인된 모의 간호사로만 새 열람 확인을 기록한다.
 5. 새 기록은 **현재 브라우저 탭 메모리에만 남고 새로고침 시 사라진다**. 실제 로그인·서명·투약 승인·법적 기록이 아니다.
+
+## v0.3: 가상 의사 약물처방 입력
+
+기존 **전체 약물/PRN** 조회 화면을 보존하면서, 접을 수 있는 **의사 약물 처방 입력 · 시뮬레이션** 화면을 추가했습니다.
+
+1. 가상 환자 4명 중 조회 중인 환자를 대상으로, 기존 가상 처방자·약물 후보 107개를 선택합니다.
+2. 정규·PRN·응급(STAT)을 선택하고 **용량·투여경로·빈도·시간**을 직접 입력합니다. PRN은 적응증과 투여 조건도 필수입니다.
+3. '가상 약물처방 등록' 후 현재 환자의 전체 약물 또는 PRN 탭에 즉시 추가되고 상세정보/검색에 반영됩니다.
+4. **응급(STAT)은 긴급도**, PRN은 필요시 투여 조건입니다. v0.3에서 응급 선택은 정규 목록의 STAT 우선순위로 표시하며 PRN으로 자동 분류하지 않습니다.
+5. 생성한 새 처방은 현재 탭 메모리에만 있으며 **새로고침 시 없어집니다**. 실제 의사 처방, 서명, 인증, 투약 승인 또는 임상적으로 검증된 용량이 아닙니다.
+6. 드레싱/처치, 검사(객담 배양 등), 검체 종류, SST/EDTA 채혈관은 앞으로 별도 데이터 영역으로 확장 예정이며 **현재 입력 기능은 약물만** 지원합니다.
+
+신규 파일: `order-composer.js`(독립 가상 처방 생성/검증), `doctor-ui.js`(접이식 의사 입력 화면), `tests/order-composer.test.cjs`(새 입력 경로·처방 구분 테스트).
+
+참고 문서: `docs/THREE-PROJECT-CONVERGENCE-v0.3.md` — MICU 근무표, PRN 의사처방, 간호처방 개선 앱의 향후 통합과 데이터 경계.
+
+**검증:** 현재 GitHub 원격 소스와 원본 가상 데이터를 불러와 별도 JS 실행 환경에서 새로운 처방 생성·PRN 조회·응급 구분·기존 데이터 비변경 등 **16개 점검 통과**. 추가 Node.js 테스트 파일을 등록했으나 신규 전체 `node --test tests/*.test.cjs`와 수정 후 실제 브라우저 UI 검증은 사용자 MVP 검수 전까지 미확인 상태입니다.
 
 ## v0.2.1: MICU 근무표 읽기 전용 시범 연동
 
