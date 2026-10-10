@@ -88,5 +88,6 @@
   });
   document.addEventListener("prn-data-ready",()=>{if(!panel.hidden)void refresh();});
   by("patientSelect")?.addEventListener("change",()=>{if(!panel.hidden)void refresh();});
-  by("composerForm")?.addEventListener("submit",()=>{if(!panel.hidden)void refresh();});
+  document.addEventListener("prn-orders-changed",()=>{if(!panel.hidden)void refresh();});
+  document.addEventListener("prn-page-changed",()=>{if(!panel.hidden)void refresh();});
 })();
