@@ -4,15 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>PRN Order Viewer v0.3.1 — 교육용</title>
+  <title>PRN Order Viewer v0.4 — 교육용</title>
   <link rel="stylesheet" href="./styles.css">
   <script src="./app.js" defer></script>
   <script src="./order-composer.js" defer></script>
   <script src="./doctor-ui.js" defer></script>
+  <script src="./order-history-model.js" defer></script>
+  <script src="./history-ui.js" defer></script>
   <script src="./order-sheet-model.js" defer></script>
   <script src="./order-sheet-ui.js" defer></script>
   <script src="./roster-bridge.js" defer></script>
   <script src="./roster-bridge-ui.js" defer></script>
+  <script src="./workspace-nav.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -20,14 +23,27 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">+</span>
         <div>
-          <div class="brand-title">PRN Order Viewer <span class="version">v0.3.1</span></div>
+          <div class="brand-title">PRN Order Viewer <span class="version">v0.4</span></div>
           <div class="brand-subtitle">가상 약물 처방 조회 · 독립형 교육 시뮬레이터</div>
         </div>
       </div>
       <span class="demo-flag">DEMO · 실제 EMR 아님</span>
     </header>
 
-    <main class="workspace">
+    <div class="app-main-layout">
+      <aside class="workspace-sidebar" aria-label="업무별 화면 탐색">
+        <div class="sidebar-heading">업무 메뉴</div>
+        <nav class="sidebar-links" aria-label="업무 영역">
+          <button class="sidebar-link is-active" type="button" data-nav="orders" aria-current="page">약물 처방 조회</button>
+          <button class="sidebar-link" type="button" data-nav="patient">환자 정보</button>
+          <button class="sidebar-link" type="button" data-nav="handoff">인계 · Kardex</button>
+          <button class="sidebar-link" type="button" data-nav="doctor">의사 처방 입력</button>
+          <button class="sidebar-link" type="button" data-nav="history">처방 변경 이력</button>
+          <button class="sidebar-link" type="button" data-nav="roster">MICU 근무표</button>
+        </nav>
+        <p class="sidebar-footnote">가상 EMR 교육용 · 각 업무 화면은 독립적으로 변경 가능</p>
+      </aside>
+      <main class="workspace" data-view="orders">
       <section class="patient-bar" aria-label="가상 환자 선택">
         <div>
           <div class="section-eyebrow">PATIENT CONTEXT</div>
@@ -39,13 +55,13 @@
         </label>
       </section>
 
-      <section class="patient-summary" aria-label="가상 환자 병력"><div class="section-eyebrow">SYNTHETIC PATIENT HISTORY</div><div id="patientSummary">환자 정보를 불러오는 중…</div></section>
-      <section class="session-bar" aria-label="간호사 가상 로그인 세션">
+      <section class="patient-summary" data-page="patient" hidden aria-label="가상 환자 병력"><div class="section-eyebrow">SYNTHETIC PATIENT HISTORY</div><div id="patientSummary">환자 정보를 불러오는 중…</div></section>
+      <section class="session-bar" data-page="orders" aria-label="간호사 가상 로그인 세션">
         <label class="session-label" for="sessionSelect">모의 로그인 근무조 <select id="sessionSelect" disabled><option>가상 근무정보를 불러오는 중…</option></select></label>
         <div class="session-context" id="sessionContext">모의 로그인 정보를 불러오는 중…</div>
         <span class="session-warning">모의 로그인 · 실제 인증 아님</span>
       </section>
-      <section class="roster-bridge-panel" aria-label="MICU 근무표 조회 전용 연결">
+      <section class="roster-bridge-panel" data-page="roster" hidden aria-label="MICU 근무표 조회 전용 연결">
         <div class="roster-bridge-title"><strong>MICU 근무표 연결 · 시범 기능</strong><span class="roster-tag">파일 가져오기 · 조회 전용</span></div>
         <p class="roster-help">MICU 화재대피 앱의 '전체 백업' JSON에서 선택 날짜·D/E/N 근무 간호사 명단만 읽습니다. 별도 인증·서명·처방 확인자 변경은 하지 않습니다.</p>
         <div class="roster-controls">
@@ -60,7 +76,7 @@
         <p class="roster-privacy">파일은 현재 브라우저에서만 처리되며 GitHub 저장소·서버·브라우저 저장소에 올리거나 저장하지 않습니다. MICU의 근무표 원본과 수정 이력에도 영향을 주지 않습니다. 전체 백업에는 직원명과 이력이 포함될 수 있습니다.</p>
       </section>
 
-      <section class="composer-panel" id="composerSection" aria-label="가상 의사 약물처방 입력">
+      <section class="composer-panel" data-page="doctor" hidden id="composerSection" aria-label="가상 의사 약물처방 입력">
         <div class="composer-header">
           <div><div class="section-eyebrow">PRESCRIBER · SIMULATED</div><strong>의사 약물 처방 입력 · 교육용</strong>
             <p>현재 환자에게 가상 약물처방을 추가해 간호사 조회 화면에서 확인합니다. 실제 처방·서명·투약 지시 아님.</p></div>
@@ -90,7 +106,7 @@
           </form>
         </div>
       </section>
-      <section class="sheet-panel" aria-label="교육용 사례 워크리스트 및 처방지 미리보기">
+      <section class="sheet-panel" data-page="handoff" hidden aria-label="교육용 사례 워크리스트 및 처방지 미리보기">
         <div class="sheet-header">
           <div>
             <div class="section-eyebrow">TEACHING CASE · KARDEX · ORDER SHEET</div>
@@ -111,7 +127,27 @@
           <p class="sheet-footnote">1일 용량·수량·횟수 등의 정보가 원본 가상 처방에 없다면 계산·추정하지 않고 '미기재'로 표시합니다. 이 표는 실제 처방지, 임상적 투약 지시 또는 학교 평가자료의 복제본이 아닙니다.</p>
         </div>
       </section>
-      <section class="orders-panel" aria-label="약물 처방">
+      <section class="history-panel" data-page="history" hidden aria-label="가상 의사 처방 변경 이력">
+        <div class="section-eyebrow">ORDER HISTORY · SIMULATION</div>
+        <h2>처방 변경·중지 이력</h2>
+        <p class="history-info">의사 처방 변경과 간호사 열람 확인은 별개의 기록이야. 변경 결과는 현재 탭에만 남으며, 실제 의료행위나 법적 감사기록이 아니야.</p>
+        <form id="historyForm" class="history-form">
+          <label>가상 처방 선택<select id="historyOrder" required></select></label>
+          <label>변경 형태<select id="historyAction"><option value="hold">보류</option><option value="resume">재개</option><option value="revise">처방 지시 변경</option><option value="stop">중지(D/C)</option><option value="cancel">취소</option></select></label>
+          <label>처방 변경 의사<select id="historyDoctor" required></select></label>
+          <label>변경 시각 (모의 KST)<input type="datetime-local" id="historyWhen" required></label>
+          <label class="history-wide">변경 사유<input id="historyReason" type="text" maxlength="300" required placeholder="시연용 변경 사유"></label>
+          <div id="historyRevisionFields" class="history-revision" hidden>
+            <label>변경할 1회 용량<input id="historyDose" maxlength="120" required></label>
+            <label>변경할 경로<input id="historyRoute" maxlength="100" required></label>
+            <label>변경할 빈도·시간<input id="historyFrequency" maxlength="180" required></label>
+          </div>
+          <button type="submit" class="history-submit">가상 변경 기록하기</button>
+        </form>
+        <p role="status" aria-live="polite" id="historyFeedback"></p>
+        <div class="history-entries"><h3>현재 환자의 변경 이벤트</h3><div id="historyEvents"></div></div>
+      </section>
+      <section class="orders-panel" data-page="orders" aria-label="약물 처방">
         <div class="panel-head">
           <div>
             <div class="section-eyebrow">MEDICATION ORDERS</div>
@@ -144,11 +180,12 @@
         <div class="list-footer" id="listFooter" aria-live="polite">화면에 표시된 정보는 교육·시연용입니다.</div>
       </section>
 
-      <aside class="detail-panel" id="detailPanel" aria-labelledby="detailHeading">
+      <aside class="detail-panel" data-page="orders" id="detailPanel" aria-labelledby="detailHeading">
         <div class="detail-heading-row"><div><div class="section-eyebrow">ORDER DETAILS</div><h2 id="detailHeading">처방 상세</h2></div><button id="closeDetail" type="button" class="close-detail" aria-label="상세 닫기">×</button></div>
         <div id="detailContent" class="detail-body"><div class="detail-placeholder"><div class="placeholder-icon" aria-hidden="true">▤</div><strong>처방을 선택해 주세요</strong><p>왼쪽 목록에서 한 건을 선택하면 가상 처방의 상세정보와 원문을 볼 수 있습니다.</p></div></div>
       </aside>
-    </main>
+      </main>
+    </div>
     <footer class="disclaimer"><strong>교육용 · 실제 투약 판단 금지</strong> — 용량·경로·간격은 검증되지 않은 화면 시연용 예시입니다. 본 화면은 nU 및 서울성모병원 공식 시스템과 무관합니다.</footer>
   </div>
 </body>
