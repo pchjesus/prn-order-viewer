@@ -72,7 +72,8 @@ const PRNCore = (() => {
     return Boolean(order && shift?.nurse_id && shift?.login_id &&
       Date.parse(shift.starts_at) <= Date.parse(shift.simulated_now) &&
       Date.parse(shift.simulated_now) < Date.parse(shift.ends_at) &&
-      (!order.ordered_at || Date.parse(order.ordered_at) <= Date.parse(shift.simulated_now)));
+      (!order.ordered_at || Date.parse(order.ordered_at) <= Date.parse(shift.simulated_now)) &&
+      (!order.last_modified_at || Date.parse(order.last_modified_at) <= Date.parse(shift.simulated_now)));
   }
 
   function appendAcknowledge(events, order, shift) {
