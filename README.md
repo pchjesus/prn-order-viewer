@@ -1,4 +1,4 @@
-# PRN Order Viewer v0.5 — Synthetic EMR PRN Medication Viewer
+# PRN Order Viewer v0.5.1 — Synthetic EMR PRN Medication Viewer
 
 > **EDUCATIONAL PROTOTYPE / SYNTHETIC DATA ONLY**
 >
@@ -18,6 +18,15 @@
 - 데이터 영구 저장·삭제/복원 정책 및 중요한 UI/UX 선택은 미확정이며, 변경 시 사용자 최종 결정을 받는다.
 
 상세 개발 우선순위·보류 목록·사용성 평가 기준: **[PRN 임상적 유용성 및 개발 로드맵](docs/PRN-CLINICAL-UTILITY-AND-ROADMAP-v0.5.md)**.
+
+## v0.5.1 — PRN 처방 확인 중심 UI 패치
+
+- **PRN 상세 상단에 '현재 PRN 처방 핵심 확인' 영역**을 추가하여 적응증, 명시된 투여 조건, 용량, 경로, 빈도·간격, 최대 지시를 모아 확인합니다. 정규/STAT 처방은 기존 상세 배치를 유지합니다.
+- PRN 처방 목록에 **투여 조건 요약(미기재 시 표시)**을 추가하고, 변경된 처방은 **변경 버전**을 표기합니다. 열람 확인·실제 투약·임상적 적합성 판단과 다릅니다.
+- 검색 대상에 **PRN 투여 조건**을 추가했습니다. 환자별 검색, PRN/STAT 구분, 상태 필터와 PRN 활성 우선 정렬은 기존대로 유지합니다.
+- 요약은 **현재 처방 버전의 문장형 필드만** 사용합니다. 과거 원문·오래된 구조화 자료(stale)를 현재 지시로 복원하거나 누락 값을 계산하지 않습니다.
+- 신규 회귀 테스트: `tests/prn-confirmation-v0.5.1.test.cjs`. **기존+신규 64건을 독립 V8 환경(가상 Node 내장 모듈)에서 실행해 통과**; 실제 Node.js/브라우저 테스트는 미실시. 상세 설계·검증 한계: `docs/PRN-CONFIRMATION-v0.5.1.md`.
+- 화면은 합성 시연용이며 기존 약물 후보·환자·처방·근무표 데이터 및 저장·복원 정책을 변경하지 않습니다.
 
 ## v0.5 — 명시적 구조화 처방
 

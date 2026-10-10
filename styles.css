@@ -129,3 +129,17 @@
 /* v0.4.1: navigation after successful prescription entry is a secondary action. */
 .composer-actions #composerViewOrder{background:#f4f8fc;color:#285d8b;border:1px solid #b5cbe2}
 .composer-actions #composerViewOrder:hover{background:#eaf3fb}
+
+
+/* v0.5.1: read-only PRN confirmation preview; no clinical decision or extra acknowledgement. */
+.prn-confirmation{margin:18px 0 21px;padding:15px;border:1px solid #c9d9e8;border-radius:10px;background:#f7fafd}
+.prn-confirmation h3{margin:0 0 7px;font-size:13px;line-height:1.5;color:#244b71}
+.prn-confirmation-version{display:inline-block;font-size:10px;font-weight:600;color:#5f7489;margin-left:5px}
+.prn-confirmation-note{font-size:10px;line-height:1.65;color:#687e94;margin:0 0 12px}
+.prn-confirmation-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.prn-confirmation .detail-label{color:#466381}
+.prn-confirmation .detail-value{font-weight:650;line-height:1.6;white-space:pre-wrap}
+.prn-list-condition{color:#476583;overflow-wrap:anywhere}
+.prn-list-condition.is-missing{color:#956428;font-weight:700}
+.prn-list-revision{color:#875c2b;font-weight:700}
+@media(max-width:450px){.prn-confirmation-grid{grid-template-columns:minmax(0,1fr)}.prn-confirmation .detail-field.full{grid-column:1}}

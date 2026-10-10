@@ -97,7 +97,7 @@ const PRNCore = (() => {
       if (tab === "prn" && order.order_type !== "prn") return false;
       if (status !== "all" && order.order_status !== status) return false;
       if (!needle) return true;
-      return [order.order_display_name, order.order_id, order.indication, order.ingredient_name_ko, order.ingredient_name_en, order.medication_catalog_id]
+      return [order.order_display_name, order.order_id, order.indication, order.administration_condition, order.ingredient_name_ko, order.ingredient_name_en, order.medication_catalog_id]
         .some(x => String(x ?? "").toLocaleLowerCase("ko").includes(needle));
     });
     // Stable active-first ordering applies only to the PRN tab's all-status view.
@@ -119,18 +119,31 @@ const PRNCore = (() => {
   function getStatusKeys(orders, patientId, tab) {
     return [...new Set(orders.filter(o => o.patient_id === patientId && (tab !== "prn" || o.order_type === "prn")).map(o => o.order_status))];
   }
+  function getPrnConfirmation(order) {
+    if (!order || order.order_type !== "prn") return null;
+    // Only the current free-text instructions are displayed. Structured data may be stale after a revision.
+    const current = value => value === null || value === undefined || !String(value).trim() ? null : String(value);
+    return {
+      indication: current(order.indication),
+      condition: current(order.administration_condition),
+      dose: current(order.dose_instruction),
+      route: current(order.route_instruction),
+      frequency: current(order.frequency_instruction),
+      maximum: current(order.maximum_limit_instruction)
+    };
+  }
   function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
   }
   return { STATUS, validate, canAcknowledge, appendAcknowledge, getOrderReviews,
-    getVisibleOrders, enrichOrders, distinctPatientIds, getStatusKeys, escapeHTML };
+    getVisibleOrders, enrichOrders, distinctPatientIds, getStatusKeys, getPrnConfirmation, escapeHTML };
 })();
 
 if (typeof module !== "undefined" && module.exports) module.exports = PRNCore;
 
 if (typeof document !== "undefined") {
   const { STATUS, validate, canAcknowledge, appendAcknowledge, getOrderReviews,
-    getVisibleOrders, enrichOrders, getStatusKeys, escapeHTML: e } = PRNCore;
+    getVisibleOrders, enrichOrders, getStatusKeys, getPrnConfirmation, escapeHTML: e } = PRNCore;
   const byId = id => document.getElementById(id);
   const state = { patientId: null, tab: "all", query: "", status: "all", selectedOrderId: null,
     orders: [], patients: [], shifts: [], reviews: [], medCatalog: [], orderEvents: [], sessionShiftId: null, loading: true };
@@ -200,6 +213,20 @@ if (typeof document !== "undefined") {
       structured.maximum.administrations?structured.maximum.administrations.period+"당 "+structured.maximum.administrations.count+"회":null
     ].filter(Boolean).join(" / "):null;
     const field = (label, val, full = false) => `<div class="detail-field${full ? " full" : ""}"><span class="detail-label">${e(label)}</span><span class="detail-value">${showVal(val)}</span></div>`;
+    const prn = getPrnConfirmation(order);
+    // No inferred timing, dose, eligibility or safety judgement. Summary uses the current textual version only.
+    const prnBrief = prn ? `<section class="prn-confirmation" aria-label="현재 PRN 처방 핵심 확인">
+      <h3>현재 PRN 처방 핵심 확인 <span class="prn-confirmation-version">버전 ${e(order.order_revision ?? 0)} · ${e(htmlStatus(order.order_status))}</span></h3>
+      <p class="prn-confirmation-note">현재 버전의 가상 처방 지시를 모아 보여줍니다. 이전 버전·구조화 값은 자동으로 채우지 않으며 실제 투약 가능 여부를 판단하지 않습니다.</p>
+      <div class="prn-confirmation-grid">
+        ${field("적응증", prn.indication)}
+        ${field("PRN 투여 조건", prn.condition)}
+        ${field("1회 용량", prn.dose)}
+        ${field("투여 경로", prn.route)}
+        ${field("투여 빈도·간격", prn.frequency, true)}
+        ${field("최대량·횟수 지시", prn.maximum, true)}
+      </div>
+    </section>` : "";
     content.innerHTML = `
       <div class="detail-title">${e(order.ingredient_name_ko)}</div>
       <div class="detail-code">${e(order.order_id)} · ${e(order.medication_catalog_id)}</div>
@@ -208,6 +235,7 @@ if (typeof document !== "undefined") {
       ${order.order_revision && !currentRevisionAcknowledged ? '<div class="detail-alert">현재 변경 버전에 대한 간호사 열람 확인 기록이 없습니다. 과거 버전의 열람 이력과 구별해 주세요.</div>' : ""}
       ${stale.length?'<div class="detail-alert">일부 구조화 항목은 이전 버전 자료입니다. 현재 버전의 구조화 지시로 사용하지 마세요: '+e(stale.join(", "))+'</div>':""}
       <div class="detail-alert">용량·경로·간격은 화면 동작을 확인하기 위한 가상 예시이며 임상 검증을 받지 않았습니다. 빈 값은 미기재로 표시합니다. 실제 투약에 사용하지 마세요.</div>
+      ${prnBrief}
       <div class="details-grid">
         ${field("가상 처방명", order.order_display_name, true)}
         ${field("처방자", `${order.prescriber_name || "미기재"} (${order.prescriber_id || "ID 없음"})`,true)}
@@ -280,7 +308,7 @@ if (typeof document !== "undefined") {
       body.innerHTML = `<tr><td colspan="7" class="table-message">${e(msg)}</td></tr>`;
     } else {
       body.innerHTML = visible.map(o => `<tr tabindex="0" role="button" aria-label="${e(o.ingredient_name_ko)} 가상 처방 상세 보기" data-order-id="${e(o.order_id)}" class="${o.order_id === state.selectedOrderId ? "is-selected" : ""}">
-        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${modeText(o)}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span></td>
+        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${modeText(o)}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span>${o.order_type==="prn"?`<span class="drug-sub prn-list-condition${miss(o.administration_condition)?" is-missing":""}">PRN 조건: ${miss(o.administration_condition)?"미기재":e(o.administration_condition)}</span>`:""}${o.order_revision>0?`<span class="drug-sub prn-list-revision">변경 버전 ${e(o.order_revision)} · 현재 지시 확인</span>`:""}</td>
         <td>${showVal(o.dose_instruction)}</td><td>${showVal(o.route_instruction)}</td><td>${showVal(o.indication)}</td><td>${showVal(o.frequency_instruction)}</td>
         <td><button type="button" class="detail-link" data-detail-id="${e(o.order_id)}" aria-label="${e(o.ingredient_name_ko)} 상세 보기">보기</button></td></tr>`).join("");
     }
