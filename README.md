@@ -37,7 +37,7 @@ python -m http.server 8000
 node --test tests/*.test.cjs
 ```
 
-개발 검증: 순수 JavaScript/데이터 구조 테스트 **14건 통과**. Chromium에서 HTML·CSS·JavaScript를 실행하고 로컬 가상 JSON을 주입한 **데스크톱/모바일 상호작용 확인**도 수행했다. 검증 환경의 네트워크 제한으로 실제 localhost HTTP 접속은 테스트하지 못했으므로 사용자 터미널에서 수동 실행 확인이 필요하다.
+v0.2 시점의 Node.js 테스트 **14건 통과**. v0.3 추가 후 GitHub 원격 소스를 이용한 별도 JS 실행 환경에서 기존 14건 + 신규 8건 = **22/22 통과**(현재 수정본의 실제 Node.js 명령 및 브라우저 UI 검증은 별도 미완료). Chromium에서 HTML·CSS·JavaScript를 실행하고 로컬 가상 JSON을 주입한 **데스크톱/모바일 상호작용 확인**도 수행했다. 검증 환경의 네트워크 제한으로 실제 localhost HTTP 접속은 테스트하지 못했으므로 사용자 터미널에서 수동 실행 확인이 필요하다.
 
 ## 파일
 
