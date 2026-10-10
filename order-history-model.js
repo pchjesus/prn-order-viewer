@@ -12,7 +12,7 @@
     requireValid(Array.isArray(orders)&&Array.isArray(events)&&order?.simulated_input&&orders.some(x=>x.order_id===order.order_id),"기록할 가상 처방이 없습니다.");
     requireValid(validTime(order.ordered_at),"처방 시각이 올바르지 않습니다.");
     requireValid(!events.some(e=>e.order_id===order.order_id&&e.action==="add"),"이미 등록한 가상 처방입니다.");
-    const event={event_id:nextId(events),action:"add",order_id:order.order_id,patient_id:order.patient_id,
+    const event={event_id:nextId(events),action:"add",order_revision:order.order_revision||0,order_id:order.order_id,patient_id:order.patient_id,
       occurred_at:order.ordered_at,actor_id:order.prescriber_id,actor_name:order.prescriber_name,
       reason:"가상 신규 처방",before:null,after:copy(order),session_only:true};
     return [...events,event];
@@ -23,8 +23,13 @@
     requireValid(index>=0,"현재 환자의 처방만 변경할 수 있습니다.");
     const current=orders[index], action=input.action;
     requireValid(["revise","hold","resume","stop","cancel"].includes(action),"지원하지 않는 변경 유형입니다.");
-    requireValid(validTime(input.occurred_at)&&Date.parse(input.occurred_at)>=Date.parse(current.ordered_at),
-      "변경 시각이 원래 처방 시각보다 앞서거나 유효하지 않습니다.");
+    // A later revision must never be backdated before the preceding revision.
+    // Equal timestamps are allowed in a simulated minute, with append order resolving ties.
+    const previousTime=current.last_modified_at || current.ordered_at;
+    requireValid(validTime(input.occurred_at) && validTime(previousTime) &&
+      Date.parse(input.occurred_at)>=Date.parse(current.ordered_at) &&
+      Date.parse(input.occurred_at)>=Date.parse(previousTime),
+      "변경 시각은 최초 처방과 직전 변경 시각보다 빠를 수 없습니다.");
     const actorId=text(input.actor_id,64),actorName=text(input.actor_name,100),reason=text(input.reason,300);
     requireValid(actorId&&actorName&&reason,"가상의사·변경 사유를 입력해야 합니다.");
     requireValid(!["stopped","cancelled","completed","entered-in-error"].includes(current.order_status),"이미 종료·취소된 처방을 변경할 수 없습니다.");
@@ -53,7 +58,8 @@
     next.last_modified_at=input.occurred_at;
     next.last_modifier_id=actorId;
     next.last_modifier_name=actorName;
-    const event={event_id:nextId(events),action,order_id:current.order_id,patient_id:current.patient_id,
+    // Link the event to the specific revision, not merely the order ID.
+    const event={event_id:nextId(events),action,order_revision:next.order_revision,order_id:current.order_id,patient_id:current.patient_id,
       occurred_at:input.occurred_at,actor_id:actorId,actor_name:actorName,reason,
       before:copy(current),after:copy(next),session_only:true};
     const updated=orders.slice();updated[index]=next;
