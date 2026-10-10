@@ -78,11 +78,11 @@ const PRNCore = (() => {
 
   function appendAcknowledge(events, order, shift) {
     if (!Array.isArray(events) || !canAcknowledge(order, shift)) throw new Error("현재 로그인/근무 시간에는 확인을 기록할 수 없습니다.");
-    if (events.some(x => x.order_id === order.order_id && x.shift_id === shift.shift_id && x.nurse_id === shift.nurse_id && x.confirmed_at === shift.simulated_now)) {
+    if (events.some(x => x.order_id === order.order_id && x.shift_id === shift.shift_id && x.nurse_id === shift.nurse_id && x.confirmed_at === shift.simulated_now && (x.order_revision ?? 0) === (order.order_revision ?? 0))) {
       throw new Error("현재 가상 근무 세션에서 이미 확인한 처방입니다.");
     }
     return [...events, {event_id:`SIM-ACK-LIVE-${events.length + 1}`,order_id:order.order_id,nurse_id:shift.nurse_id,
-      shift_id:shift.shift_id,confirmed_at:shift.simulated_now,action:"read_acknowledgement",session_only:true}];
+      shift_id:shift.shift_id,confirmed_at:shift.simulated_now,order_revision:order.order_revision??0,action:"read_acknowledgement",session_only:true}];
   }
 
   function getOrderReviews(reviews, orderId) {
