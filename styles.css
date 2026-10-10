@@ -14,3 +14,25 @@
 .ack-button:disabled{background:#edf1f6;color:#6e8095;border-color:#d6e0ed;cursor:not-allowed}
 @media(max-width:850px){.patient-summary,.session-bar{margin-bottom:12px}.session-bar{display:block}.session-context{margin-top:8px}.session-warning{display:inline-block;margin-top:8px}}
 @media(max-width:550px){.patient-summary,.session-bar{padding:12px}.session-label{display:block}.session-label select{display:block;width:100%;margin-top:6px;max-width:none}}
+
+/* v0.2.1 MICU on-duty roster preview: self-contained and removable without affecting order view */
+.workspace{grid-template-areas:"patient patient" "summary summary" "session session" "roster roster" "orders detail"}
+.roster-bridge-panel{grid-area:roster;background:#fff;border:1px solid #d8e1ec;border-radius:12px;padding:15px 20px;box-shadow:0 2px 12px #21385508;min-width:0}
+.roster-bridge-title{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:#1e4168;font-size:13px}
+.roster-tag{font-size:10px;color:#607893;background:#edf2f9;border-radius:12px;padding:4px 9px}
+.roster-help,.roster-privacy{font-size:11px;color:#718399;line-height:1.65;margin:8px 0}
+.roster-controls{display:grid;grid-template-columns:1fr 100px minmax(200px,1.5fr);gap:12px;margin:12px 0}
+.roster-controls label{font-size:11px;color:#435c77;font-weight:650;display:grid;gap:5px;min-width:0}
+.roster-controls input,.roster-controls select{border:1px solid #cbd7e5;border-radius:7px;padding:9px;background:#fff;color:#223951;width:100%;min-width:0;font-size:12px}
+.roster-consent{display:flex;gap:8px;align-items:flex-start;font-size:11px;line-height:1.6;color:#6c5162;margin:11px 0}
+.roster-consent input{margin-top:4px}
+.roster-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.roster-actions button{border-radius:7px;padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid #bed0e2;background:#f8fafc;color:#315d8a}
+#micuRosterImport{background:#255e96;color:#fff;border-color:#255e96}
+.roster-result{font-size:11px;color:#345a79;background:#f3f7fc;padding:10px;border-radius:7px;line-height:1.7}
+.roster-people{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.roster-people-head{width:100%;font-size:11px;font-weight:750;color:#245177}
+.roster-person{padding:6px 9px;border:1px solid #dce7f0;background:#f8fbff;border-radius:7px;font-size:11px;color:#34516b}
+.roster-people-empty{font-size:11px;color:#647c93}
+@media(max-width:850px){.workspace{grid-template-areas:none}.roster-bridge-panel{margin-bottom:12px}.roster-controls{grid-template-columns:1fr 1fr}.roster-controls label:last-child{grid-column:1/-1}}
+@media(max-width:550px){.roster-bridge-panel{padding:12px}.roster-controls{grid-template-columns:1fr}.roster-controls label:last-child{grid-column:auto}}
