@@ -1,10 +1,11 @@
 "use strict";
 /* A UI-independent, synthetic physician-order factory. Not a prescribing or clinical decision system. */
 (function (root, factory) {
-  const api = factory();
+  const api = factory(root);
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.PRNOrderComposer = api;
-})(globalThis, function () {
+})(globalThis, function (root) {
+  const structure = (typeof module !== "undefined" && module.exports) ? require("./order-structure.js") : root.PRNOrderStructure;
   const MODES = Object.freeze(["regular", "prn", "emergency"]);
   const PRIORITY = Object.freeze({regular:"routine",prn:"routine",emergency:"stat"});
   const LIMITS = Object.freeze({dose:120,route:100,frequency:180,indication:180,condition:300,max:180,special:600});
@@ -29,12 +30,14 @@
     assert(MODES.includes(input.mode),"처방 형태를 확인해 주세요.");
     const order_type=input.mode==="prn"?"prn":"regular";
     const priority=PRIORITY[input.mode];
-    const dose=trim(input.dose_instruction,LIMITS.dose);
-    const route=trim(input.route_instruction,LIMITS.route);
-    const freq=trim(input.frequency_instruction,LIMITS.frequency);
+    assert(structure && typeof structure.compose==="function","구조화 처방 모듈을 불러오지 못했습니다.");
+    const structured=structure.compose(input);
+    const dose=trim(structured.dose_instruction,LIMITS.dose);
+    const route=trim(structured.route_instruction,LIMITS.route);
+    const freq=trim(structured.frequency_instruction,LIMITS.frequency);
     const indication=trim(input.indication,LIMITS.indication);
     const condition=trim(input.administration_condition,LIMITS.condition);
-    const maximum=trim(input.maximum_limit_instruction,LIMITS.max);
+    const maximum=trim(structured.maximum_limit_instruction,LIMITS.max);
     const special=trim(input.special_instruction,LIMITS.special);
     assert(dose && route && freq,"가상 1회 용량·경로·투여 시간/빈도를 모두 입력해 주세요.");
     if(input.mode==="prn")assert(indication && condition,"PRN에는 적응증과 구체적인 투여 조건이 필요합니다.");
@@ -54,6 +57,7 @@
       dose_instruction:dose,route_instruction:route,frequency_instruction:freq,
       indication:indication||null,administration_condition:condition||null,
       maximum_limit_instruction:maximum||null,special_instruction:special||null,
+      instruction_structure:structured.instruction_structure,
       scheduled_at:schedule||null,
       original_order_text:"[DEMO] "+medicine.ingredient_name_ko+" / "+modeLabel+
         "\n1회: "+dose+" · 경로: "+route+" · 빈도·시간: "+freq+

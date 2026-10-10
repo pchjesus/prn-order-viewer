@@ -50,6 +50,18 @@
         if(next[key]!==candidate){next[key]=candidate;changed=true;}
       }
       requireValid(changed,"실제 변경된 항목이 없습니다.");
+      if(current.instruction_structure?.schema_version===1){
+        const map={dose_instruction:"dose",route_instruction:"route",frequency_instruction:"schedule",
+          indication:"prn",administration_condition:"prn"};
+        const retained=copy(current.instruction_structure);
+        const stale=new Set(retained.stale_sections||[]);
+        for(const key of Object.keys(changes)){
+          const section=map[key];
+          if(section&&current[key]!==next[key]&&retained[section])stale.add(section);
+        }
+        retained.stale_sections=[...stale];
+        next.instruction_structure=retained;
+      }
       if(next.order_type==="prn" && ("indication" in changes || "administration_condition" in changes))
         requireValid(text(next.indication,180)&&text(next.administration_condition,300),"변경 대상 PRN의 적응증과 조건을 함께 확인해 주세요.");
       // Legacy simulated PRN records can lack condition; do not invent it during dose/route/frequency-only edits.

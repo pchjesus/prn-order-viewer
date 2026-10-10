@@ -184,6 +184,21 @@ if (typeof document !== "undefined") {
     const reviewHistory = reviews.length
       ? reviews.map(r => `<div class="review-row"><strong>${e(getNurseName(r.nurse_id))}</strong><span>${e(formatTime(r.confirmed_at))}</span><small>열람 확인 · ${e(r.shift_id)} · 처방 버전 ${e(r.order_revision??0)}${(r.order_revision??0)!==(order.order_revision??0)?" · 이전 버전 확인":""}${r.session_only ? " · 현재 탭에서만 유지" : " · 예시 기록"}</small></div>`).join("")
       : '<p class="review-empty">열람 확인 기록 없음</p>';
+
+    const structured=order.instruction_structure;
+    const stale=structured?.stale_sections||[];
+    const currentField=(name,value)=>stale.includes(name)?"이전 버전 값 · 구조화 재입력 필요":value;
+    const productSummary=structured?[structured.product?.name,structured.product?.form,structured.product?.strength].filter(Boolean).join(" / "):null;
+    const doseSummary=structured?.dose?structured.dose.value+" "+structured.dose.unit:null;
+    const scheduleSummary=structured?.schedule?[
+      structured.schedule.frequency?structured.schedule.frequency.period+"당 "+structured.schedule.frequency.count+"회":null,
+      structured.schedule.interval?structured.schedule.interval.value+" "+structured.schedule.interval.unit:null,
+      structured.schedule.times?.length?"시각 "+structured.schedule.times.join(", "):null
+    ].filter(Boolean).join(" / "):null;
+    const maxSummary=structured?.maximum?[
+      structured.maximum.dose?structured.maximum.dose.value+" "+structured.maximum.dose.unit:null,
+      structured.maximum.administrations?structured.maximum.administrations.period+"당 "+structured.maximum.administrations.count+"회":null
+    ].filter(Boolean).join(" / "):null;
     const field = (label, val, full = false) => `<div class="detail-field${full ? " full" : ""}"><span class="detail-label">${e(label)}</span><span class="detail-value">${showVal(val)}</span></div>`;
     content.innerHTML = `
       <div class="detail-title">${e(order.ingredient_name_ko)}</div>
@@ -191,6 +206,7 @@ if (typeof document !== "undefined") {
       <div class="detail-badges">${badge(order.order_status)}<span class="type-chip">${modeText(order)} 처방</span></div>
       ${order.order_revision ? '<div class="detail-alert">처방이 변경된 시뮬레이션 기록입니다. 아래 용량·경로·상태는 현재 버전이며, 하단 최초 입력 원문은 변경 전 내용일 수 있습니다.</div>' : ""}
       ${order.order_revision && !currentRevisionAcknowledged ? '<div class="detail-alert">현재 변경 버전에 대한 간호사 열람 확인 기록이 없습니다. 과거 버전의 열람 이력과 구별해 주세요.</div>' : ""}
+      ${stale.length?'<div class="detail-alert">일부 구조화 항목은 이전 버전 자료입니다. 현재 버전의 구조화 지시로 사용하지 마세요: '+e(stale.join(", "))+'</div>':""}
       <div class="detail-alert">용량·경로·간격은 화면 동작을 확인하기 위한 가상 예시이며 임상 검증을 받지 않았습니다. 빈 값은 미기재로 표시합니다. 실제 투약에 사용하지 마세요.</div>
       <div class="details-grid">
         ${field("가상 처방명", order.order_display_name, true)}
@@ -204,6 +220,13 @@ if (typeof document !== "undefined") {
         ${field("최종 변경자", order.last_modifier_name)}
         ${field("최종 변경 시각", order.last_modified_at)}
         ${field("약물 분류", order.category_name_ko)}
+        ${field("구조화 자료 여부",structured?"명시적으로 입력 · 임상 미검증":"기존 자유문장 / 자동변환 없음",true)}
+        ${structured?field("제품 / 제형 / 함량(명시 입력)",productSummary,true):""}
+        ${structured?field("구조화 용량",currentField("dose",doseSummary)):""}
+        ${structured?field("구조화 경로 코드",currentField("route",structured.route?.code)):""}
+        ${structured?field("구조화 빈도 / 간격 / 시각",currentField("schedule",scheduleSummary),true):""}
+        ${structured?field("구조화 최대 지시",currentField("maximum",maxSummary),true):""}
+        ${structured?field("구조화 PRN 조건",currentField("prn",structured.prn?[structured.prn.indication,structured.prn.condition].filter(Boolean).join(" / "):null),true):""}
         ${field("1회 용량", order.dose_instruction)}
         ${field("투여 경로", order.route_instruction)}
         ${field("적응증", order.indication, true)}

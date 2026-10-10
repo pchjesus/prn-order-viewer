@@ -1,5 +1,18 @@
 # DEVLOG
 
+## 2026-10-10 / v0.5 structured synthetic medication instructions
+
+- Baseline protected: `main` commit `6280c7c49c6d84a9dacbdf463f919ffecfe1e12a`.
+- Add `order-structure.js` to support explicit structured input only, with bounded values and strict pair / code / HH:MM validation.
+- Preserve existing free-text fields. Derived display text is built only from directly entered structured values; conflicting duplicate text is rejected.
+- Optional collapsible structured fields in doctor entry. v0.5 detail view differentiates raw text and independently entered structure.
+- Maintain patient ID, order ID, mode / priority, revision, and nurse review independence.
+- When revising text fields that have structured counterparts, retain structured historical content while flagging affected sections as stale.
+- No automatic parsing of the original 18 orders, no medication-catalog bulk data enrichment, no persistence or migration.
+- Verification status must be reported from actual execution. The independent V8 checks are not a substitute for Node.js and browser smoke runs.
+
+
+
 ## 2026-10-10 / Planning baseline v0.1
 
 ### Confirmed intent

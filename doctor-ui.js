@@ -74,7 +74,17 @@
         frequency_instruction:get("composerFrequency"),indication:get("composerIndication"),
         administration_condition:get("composerCondition"),maximum_limit_instruction:get("composerLimit"),
         special_instruction:get("composerSpecial"),ordered_at:local+":00+09:00",
-        scheduled_at:get("composerScheduled")?get("composerScheduled")+":00+09:00":null
+        scheduled_at:get("composerScheduled")?get("composerScheduled")+":00+09:00":null,
+        structured_fields:{
+          product_name:get("composerProductName"),dosage_form:get("composerDosageForm"),
+          strength_text:get("composerStrengthText"),dose_value:get("composerDoseValue"),
+          dose_unit:get("composerDoseUnit"),route_code:get("composerRouteCode"),
+          frequency_count:get("composerFrequencyCount"),frequency_period:get("composerFrequencyPeriod"),
+          interval_value:get("composerIntervalValue"),interval_unit:get("composerIntervalUnit"),
+          administration_times:get("composerTimes"),max_dose_value:get("composerMaxDoseValue"),
+          max_dose_unit:get("composerMaxDoseUnit"),max_count:get("composerMaxCount"),
+          max_count_period:get("composerMaxCountPeriod")
+        }
       };
       const record=window.PRNOrderComposer.createOrder(data,ctx);
       const code=window.PRNComposerHost.addOrder(record);

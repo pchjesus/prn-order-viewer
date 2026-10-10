@@ -96,3 +96,18 @@
 - `createEnvelope()`: 통합 연구용 가상 공통 참조 구조; 실제 FHIR 호환은 주장하지 않음.
 
 자세한 모델 분리 및 다른 프로젝트와의 ID 매핑 제한은 `docs/THREE-PROJECT-CONVERGENCE-v0.3.md` 참조.
+
+## v0.5 MedicationOrder structured instruction (explicitly entered only)
+
+- `instruction_structure`: `null` for newly entered free-text-only orders; absent for the unchanged seeded 18 orders.
+- `schema_version=1` and `source=explicit_simulated_input`, `verification_status=simulation_unverified`: no clinical verification.
+- `ingredient_catalog_id`: catalog reference; not an actual drug product code.
+- `product: {name,form,strength}`: independent, optional user-supplied simulated product data; no product catalog inference.
+- `dose: {value,unit}`: decimal numeric **string** plus explicitly chosen unit. Numeric plausibility is not a clinical dose check.
+- `route: {code,display}`: internal prototype mapping; not an assertion of institutional or terminology standard codes.
+- `schedule: {frequency:{count,period}, interval:{value,unit}, times:[HH:MM]}`: optional and independent dimensions.
+- `prn: {indication,condition}`: explicitly entered PRN reason and condition, not an administration decision.
+- `maximum: {dose:{value,unit}, administrations:{count,period}}`: user-supplied maximum instructions only, with no cumulative dose logic.
+- `stale_sections`: sections invalidated for current interpretation when a corresponding free-text field changes. Historical snapshots remain stored in memory.
+- Existing `dose_instruction`, `route_instruction`, `frequency_instruction`, `maximum_limit_instruction`, `original_order_text`, `order_revision` remain compatible.
+- Disallowed at v0.5: deriving structured fields from existing free-text orders, clinical administration eligibility, uncontrolled bulk medication enrichment, unauthorized persistence or migration.
