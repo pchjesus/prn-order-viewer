@@ -70,3 +70,27 @@ test("event record IDs unique, snapshots remain unmodified on future revisions",
  assert.equal(second.events[0].before.order_status,"active");
  assert.equal(second.events[1].after.order_status,"active");
 });
+
+test("pre-revision acknowledgement never certifies the changed prescription",()=>{
+ const updated=history.transition(seeded,[],input("revise",target,{changes:{dose_instruction:"SIM-REVISION-only"}}));
+ const revised=updated.orders.find(x=>x.order_id===target.order_id);
+ assert.equal(revised.order_revision,1);
+ const baselineAck=reviews.filter(r=>r.order_id===target.order_id);
+ assert.ok(baselineAck.some(x=>(x.order_revision??0)===0));
+ const currentAck=baselineAck.filter(x=>(x.order_revision??0)===(revised.order_revision??0));
+ assert.equal(currentAck.length,0);
+ assert.equal(core.canAcknowledge(revised,shifts[0]),false);
+ const newAcks=core.appendAcknowledge(reviews,revised,shifts[1]);
+ const newest=newAcks[newAcks.length-1];
+ assert.equal(newest.order_revision,1);
+ assert.equal(newest.nurse_id,shifts[1].nurse_id);
+ assert.equal(core.getOrderReviews(newAcks,revised.order_id).length,baselineAck.length+1);
+ assert.throws(()=>core.appendAcknowledge(newAcks,revised,shifts[1]));
+});
+test("changes to other patients do not affect existing nurse confirmations or source snapshots",()=>{
+ const orig=JSON.stringify(reviews),baseline=JSON.stringify(base);
+ const updated=history.transition(seeded,[],input("hold"));
+ assert.equal(JSON.stringify(reviews),orig);
+ assert.equal(JSON.stringify(base),baseline);
+ assert.equal(core.validate(catalog,updated.orders,patients,shifts,reviews),true);
+});
