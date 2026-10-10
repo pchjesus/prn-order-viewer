@@ -119,3 +119,31 @@
 2. Consider common pseudonymous staff identifiers, but do not equate roster presence with authentication.
 3. Do not duplicate patient data across apps until MICU genuinely requires patient-level evacuation workflow.
 4. Evaluate combined UI/modules only after isolated components and regression checks stabilize.
+
+## 2026-10-10 / v0.3 simulated physician medication order UI
+
+### Findings / design
+- Reviewed `pchjesus/prn-order-viewer` v0.2.1, `pchjesus/micu-fire-evacuation` v0.7.4 RC, and `pchjesus/nursing-order-ux-research` v0.2.1 MVP.
+- Plan **future integration**, but do not join database/repositories now. MICU staff shifts and patient chart data remain independently owned.
+- Nursing-order `ACT/FOLLOW/MAT` categories remain separate from doctor MedicationOrder and future ServiceRequest. SST/EDTA are specimen tube types, not diagnostic test names.
+- Order mode regular/PRN vs emergency STAT priority are conceptually separate. Future lab/dressing orders need dedicated subtype records.
+
+### Implemented
+- `order-composer.js`: pure validation, 107-option medication references, simulated prescriber, unique ID, regular/PRN/emergency priority, optional instructions, future order envelope.
+- `doctor-ui.js`: collapsible doctor order form with patient context and user-entered dose/route/frequency/indication/schedule.
+- `index.html`, `styles.css`: isolated form panel, current viewer layout preserved.
+- `app.js`: minimal controlled `PRNComposerHost` interface to add created synthetic order to existing patient views; existing JSON seed untouched; emergency distinguished from PRN.
+- `tests/order-composer.test.cjs`: focused data integrity, role, mode, invalid input and existing behavior regression tests.
+- `docs/THREE-PROJECT-CONVERGENCE-v0.3.md`: decisions, risk assessment, cross-project model.
+
+### Verification
+- JavaScript syntax parsing of new/affected JS successful.
+- GitHub current-version source evaluated using isolated JS runtime: 16 checks passed including existing 107 medications, 4 patients, 18 orders, new PRN patient isolation, stat not PRN, invalid input rejection and existing review data invariance.
+- Existing baseline Node tests were run on pre-v0.3 local files; **new full Node test runner and post-patch browser UI interaction remain unverified**.
+- No long-lived storage; refresh discards new prescriptions; actual medication doses not clinically approved.
+
+### Next
+1. User-chosen MVP visual review when functions mature.
+2. Decide local data retention / order revision history policy before persistent doctor order storage or cancellations.
+3. Further review of order priority, laboratory specimen/container, dressings and linked nursing tasks before implementation.
+4. Other project chats receive integration-contract context, but independent code remains unchanged.
