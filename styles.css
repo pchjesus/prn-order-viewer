@@ -36,3 +36,25 @@
 .roster-people-empty{font-size:11px;color:#647c93}
 @media(max-width:850px){.workspace{grid-template-areas:none}.roster-bridge-panel{margin-bottom:12px}.roster-controls{grid-template-columns:1fr 1fr}.roster-controls label:last-child{grid-column:1/-1}}
 @media(max-width:550px){.roster-bridge-panel{padding:12px}.roster-controls{grid-template-columns:1fr}.roster-controls label:last-child{grid-column:auto}}
+
+/* v0.3 physician entry: isolated; the order table/detail layout is unchanged. */
+.workspace{grid-template-areas:"patient patient" "summary summary" "session session" "roster roster" "composer composer" "orders detail"}
+.composer-panel{grid-area:composer;background:white;border:1px solid #d8e1ec;border-radius:12px;padding:15px 20px;box-shadow:0 2px 12px #21385508;min-width:0}
+.composer-header{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.composer-header strong{font-size:13px;color:#1d4169}
+.composer-header p{font-size:11px;color:#728399;line-height:1.7;margin-top:6px}
+#composerToggle{background:#f0f5fc;border:1px solid #bbd0e8;border-radius:8px;color:#235b92;padding:10px 14px;font-size:11px;font-weight:750;cursor:pointer}
+#composerPanel[hidden],#composerConditionRow[hidden]{display:none!important}
+.composer-current{border:1px solid #e2eaf4;border-radius:8px;background:#f7f9fd;padding:11px;color:#34516e;font-size:11px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0 12px}
+.composer-extra{color:#7890a8;font-weight:400}
+.composer-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.composer-fields label{display:flex;flex-direction:column;gap:5px;font-size:11px;font-weight:650;color:#44627f;min-width:0}
+.composer-fields input,.composer-fields select,.composer-fields textarea{font:inherit;font-size:12px;color:#233e5a;border:1px solid #cdd9e8;background:white;border-radius:7px;padding:10px;min-width:0;width:100%;resize:vertical}
+.composer-span2{grid-column:span 2}
+.composer-mode-hint{color:#785c2b;font-size:11px;line-height:1.6;margin-top:12px}
+.composer-actions{margin-top:14px;display:flex;align-items:center;flex-wrap:wrap;gap:14px}
+.composer-actions button{background:#255e96;color:white;border:1px solid #255e96;border-radius:7px;padding:11px 14px;font-size:12px;font-weight:750;cursor:pointer}
+.composer-actions p{color:#576e89;font-size:11px;line-height:1.7;flex:1}
+@media(max-width:1100px){.composer-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.composer-panel{margin-bottom:12px}.composer-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:550px){.composer-panel{padding:13px}.composer-fields{grid-template-columns:1fr}.composer-span2{grid-column:auto}.composer-actions{display:block}.composer-actions p{margin-top:8px}}
