@@ -7,7 +7,7 @@
 - 공개 범위: **Private**
 - 기본 브랜치: `main`
 - 초기 등록 자료: `README.md`, `docs/`, `data/`
-- 단계: 기획자료 초기 업로드 (웹앱 구현 전)
+- 단계: v0.1 읽기 전용 웹앱 구현 및 자동 검증 완료(사용자 터미널 시각 확인 전)
 
 ## 후속 개발 규칙
 
@@ -25,4 +25,17 @@
 - PRN 목록의 기본 상태 필터: **전체 상태 표시**.
 - PRN 전체 상태 보기의 표시 순서: **유효(`active`) 처방 상단 우선**, 다른 처방 상태도 모두 유지.
 - 정확한 동작·안전 규칙 및 검증 기준은 `docs/SPEC-v0.1.md` 참조.
-- 이번 변경은 기획 확정 및 문서 반영까지만 수행하며, 웹앱은 별도 요청 전 구현하지 않는다.
+- 확정된 UX를 준수하여 v0.1 읽기 전용 웹앱을 구현했다. 후속 UX·임상 판단 기능은 사용자 검토 없이 확대하지 않는다.
+
+## 비공개 저장소에서 직접 실행하기
+
+저장소 루트의 GitHub Codespaces 또는 로컬 터미널에서:
+
+```bash
+git pull origin main
+python -m http.server 8000
+```
+
+개발자 로컬 환경에서 `python3` 또는 `py`도 사용 가능. 브라우저 주소는 로컬에서 `http://localhost:8000`이며 Codespaces는 **Ports → 8000 → Open in Browser**를 사용한다. Codespaces 포트 접근 권한은 **Private**로 유지한다. GitHub Pages 활성화나 Public 저장소 변경은 하지 않는다.
+
+테스트 명령: `node --test tests/core.test.cjs`.
