@@ -181,7 +181,7 @@ if (typeof document !== "undefined") {
     const shift = currentShift();
     const allowAck = canAcknowledge(order, shift) && !reviews.some(r => r.shift_id === shift.shift_id && r.confirmed_at === shift.simulated_now && (r.order_revision??0)===(order.order_revision??0));
     const reviewHistory = reviews.length
-      ? reviews.map(r => `<div class="review-row"><strong>${e(getNurseName(r.nurse_id))}</strong><span>${e(formatTime(r.confirmed_at))}</span><small>열람 확인 · ${e(r.shift_id)}${r.session_only ? " · 현재 탭에서만 유지" : " · 예시 기록"}</small></div>`).join("")
+      ? reviews.map(r => `<div class="review-row"><strong>${e(getNurseName(r.nurse_id))}</strong><span>${e(formatTime(r.confirmed_at))}</span><small>열람 확인 · ${e(r.shift_id)} · 처방 버전 ${e(r.order_revision??0)}${(r.order_revision??0)!==(order.order_revision??0)?" · 이전 버전 확인":""}${r.session_only ? " · 현재 탭에서만 유지" : " · 예시 기록"}</small></div>`).join("")
       : '<p class="review-empty">열람 확인 기록 없음</p>';
     const field = (label, val, full = false) => `<div class="detail-field${full ? " full" : ""}"><span class="detail-label">${e(label)}</span><span class="detail-value">${showVal(val)}</span></div>`;
     content.innerHTML = `
