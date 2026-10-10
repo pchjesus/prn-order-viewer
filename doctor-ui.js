@@ -6,8 +6,8 @@
   const toggle = el("composerToggle"), panel = el("composerPanel"), form = el("composerForm");
   const info = el("composerMessage"), patient = el("composerPatient"), provider = el("composerProvider"),
     med = el("composerMedication"), mode = el("composerMode"), condition = el("composerConditionRow"),
-    when = el("composerWhen");
-  if (![toggle,panel,form,info,patient,provider,med,mode,condition,when].every(Boolean)) return;
+    when = el("composerWhen"), viewOrder = el("composerViewOrder");
+  if (![toggle,panel,form,info,patient,provider,med,mode,condition,when,viewOrder].every(Boolean)) return;
   const append = (select,label,value) => select.add(new Option(String(label),String(value)));
   function context() {
     if (!window.PRNComposerHost || !window.PRNOrderComposer) throw new Error("의사 처방 시뮬레이터가 아직 준비되지 않았습니다.");
@@ -18,12 +18,16 @@
     if(!ctx.ready){form.querySelector("button[type=submit]").disabled=true;return;}
     patient.textContent=ctx.patients.find(p=>p.patient_id===ctx.patientId)?.display_name+
       " ("+ctx.patientId+") · 가상 환자";
+    // Reopening the form on the same patient must preserve an unfinished draft.
+    const previousProvider=provider.value,previousMedication=med.value,previousTime=when.value;
     provider.replaceChildren();
     for(const d of ctx.doctors) append(provider,d.prescriber_name+" ("+d.prescriber_id+")",d.prescriber_id);
+    if([...provider.options].some(o=>o.value===previousProvider))provider.value=previousProvider;
     med.replaceChildren();
     append(med,"약물 성분을 선택하세요","");
     for(const item of ctx.catalog) append(med,item.ingredient_name_ko+" · "+item.category_name_ko,item.medication_catalog_id);
-    when.value=(ctx.simulatedNow||"2026-10-10T10:30:00+09:00").slice(0,16);
+    if([...med.options].some(o=>o.value===previousMedication))med.value=previousMedication;
+    when.value=previousTime||(ctx.simulatedNow||"2026-10-10T10:30:00+09:00").slice(0,16);
     form.querySelector("button[type=submit]").disabled=false;
   }
   function updateMode() {
@@ -42,18 +46,21 @@
     if(!panel.hidden){try{refresh();}catch(e){info.textContent=e.message;}panel.scrollIntoView({block:"nearest"});}
   });
   mode.addEventListener("change",updateMode);
+  viewOrder.addEventListener("click",()=>document.querySelector('[data-nav="orders"]')?.click());
   document.addEventListener("prn-data-ready",()=>{if(!panel.hidden)refresh();});
   el("patientSelect").addEventListener("change",()=>{
     // Prevent dose/route/time typed for a different patient from carrying over.
     form.reset();
     mode.value="regular";
     updateMode();
+    viewOrder.hidden=true;
     info.textContent="환자가 변경되어 이전 환자의 미등록 처방 입력값을 초기화했습니다.";
     if(!panel.hidden)refresh();
   });
   form.addEventListener("submit",ev=>{
     ev.preventDefault();
     info.textContent="";
+    viewOrder.hidden=true;
     try {
       const ctx=context();
       if(!ctx.ready) throw new Error("기본 자료가 준비되지 않았습니다.");
@@ -71,7 +78,8 @@
       };
       const record=window.PRNOrderComposer.createOrder(data,ctx);
       const code=window.PRNComposerHost.addOrder(record);
-      info.textContent="가상 처방 "+code+"이(가) 현재 탭의 조회 목록에 추가됐습니다. 새로고침하면 사라집니다. 실제 처방·서명 또는 투약 지시가 아닙니다.";
+      info.textContent="가상 처방 "+code+"이(가) 현재 환자의 약물 목록에 추가됐습니다. 처방 조회 화면에서 상세를 확인할 수 있습니다. 새로고침하면 사라집니다.";
+      viewOrder.hidden=false;
       form.reset();
       mode.value="regular";
       updateMode();
