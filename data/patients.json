@@ -1,0 +1,62 @@
+[
+  {
+    "patient_id": "DEMO-P001",
+    "display_name": "김가온",
+    "age": 58,
+    "sex": "여",
+    "bed": "SIM-3A-01",
+    "admission_date": "2026-10-08",
+    "primary_problem": "복부 수술 후 회복 중",
+    "medical_history": [
+      "고혈압(가상)",
+      "수술 후 오심 경험"
+    ],
+    "current_condition": "수술 2일째. 경구 섭취를 시작했고 간헐적 통증·오심이 있는 설정.",
+    "care_note": "수술 후 통증, 오심 및 배변 상태 관찰 시나리오"
+  },
+  {
+    "patient_id": "DEMO-P002",
+    "display_name": "이서준",
+    "age": 44,
+    "sex": "남",
+    "bed": "SIM-3A-02",
+    "admission_date": "2026-10-09",
+    "primary_problem": "검사 후 단기 관찰",
+    "medical_history": [
+      "위식도역류 증상(가상)"
+    ],
+    "current_condition": "검사 후 회복 관찰 중. 현 시나리오에는 PRN 처방이 등록되지 않음.",
+    "care_note": "PRN 0건 및 정규 처방 구분 검증"
+  },
+  {
+    "patient_id": "DEMO-P003",
+    "display_name": "최다온",
+    "age": 69,
+    "sex": "남",
+    "bed": "SIM-3A-03",
+    "admission_date": "2026-10-07",
+    "primary_problem": "만성 폐쇄성 기도질환 악화 관찰",
+    "medical_history": [
+      "기도질환(가상)",
+      "복부팽만",
+      "불안 증상"
+    ],
+    "current_condition": "기관지경련 관련 증상 관찰. 이전 흡입 처방은 중지되고 재처방된 상태. 진정 관련 처방은 보류됨.",
+    "care_note": "동일 약물의 유효·중지 처방, 보류 상태 및 적응증 누락 시나리오"
+  },
+  {
+    "patient_id": "DEMO-P004",
+    "display_name": "박하린",
+    "age": 33,
+    "sex": "여",
+    "bed": "SIM-3A-04",
+    "admission_date": "2026-10-10",
+    "primary_problem": "피부 가려움 및 알레르기 증상",
+    "medical_history": [
+      "계절성 알레르기 증상(가상)",
+      "간헐적 두통"
+    ],
+    "current_condition": "피부 가려움과 눈 가려움을 호소하는 안정된 가상 성인 사례.",
+    "care_note": "항히스타민·외용제·점안제 및 경구 PRN 처방 표시 테스트"
+  }
+]
