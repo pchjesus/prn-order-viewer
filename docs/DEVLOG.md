@@ -175,3 +175,27 @@
 2. Decide persistence/restore policy before user-editable durable events.
 3. Later add a separate domain for lab/service/procedure orders, specimen types and containers.
 4. Preserve PRN/nursing/MICU independent capabilities while developing a future common patient/staff/order reference standard.
+
+## 2026-10-10 / v0.4 Modular workspace + simulated order change events
+
+### Decision
+- User suggested a ChatGPT-style left sidebar separating patient information, Kardex, order list, and other workflows. Adopted one-app, independent-page navigation, not separate browser windows or shared new server.
+- Preserved common patient selector, existing order view and MICU bridge; made side navigation presentation-only.
+
+### Implemented
+- Added six left sidebar entries (orders/default, patient, handoff, doctor, prescription history, MICU roster); responsive horizontal nav on narrow screens.
+- New `workspace-nav.js` controlling panel visibility and selected page; no app-state or database writes.
+- New `order-history-model.js` with isolated nonpersistent events and before/after snapshots: add, revise, hold, resume, stop(D/C), cancel.
+- `app.js` controlled host interface for read current patient history and apply current patient physician-authored simulated changes. Existing order IDs and base data retained.
+- Modified `app.js` to distinguish nurse acknowledgement for order revision 0 (seeded) vs revision 1+ (updated); old acknowledgements are displayed as historical, not current revision acknowledgement.
+- Version time validation prevents read acknowledgements for revisions made after current simulated shift clock.
+- `history-ui.js` provides physician revision form + isolated patient event history; `order-sheet-ui.js` refreshes on navigation and order changes.
+
+### Validation / known limits
+- 42/42 core, composer, worksheet, history and navigation tests passed in isolated V8 JS runner using current remote code. Added 9 history tests and 4 navigation tests.
+- Existing MICU bridge files and patient/drug/seed data not changed; MICU regression suite NOT rerun.
+- Actual browser and GitHub Codespaces HTTP integration not verified yet (user deferred visual QA until completed MVP).
+- No persistent audit log, actual credential authentication, medication eligibility, dosage validation, order signing or hospital EMR integration.
+
+### Next
+- Review eventual persistent event storage policy with user, evaluate modular layout at final MVP, then implement separate lab/service/procedure order domains without merging all records.
