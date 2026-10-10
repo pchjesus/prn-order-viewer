@@ -137,7 +137,10 @@ if (typeof document !== "undefined") {
   const currentShift = () => state.shifts.find(s => s.shift_id === state.sessionShiftId);
   const formatTime = time => time ? String(time).replace("T", " ").replace(/\+09:00$/, " KST") : "미기재";
   const getNurseName = nurseId => state.shifts.find(s => s.nurse_id === nurseId)?.nurse_name ?? "가상 간호사 정보 없음";
-  const lastReview = orderId => getOrderReviews(state.reviews, orderId)[0];
+  const lastReview = orderId => {
+    const order=state.orders.find(x=>x.order_id===orderId);
+    return getOrderReviews(state.reviews,orderId).find(x=>(x.order_revision??0)===(order?.order_revision??0));
+  };
   const miss = val => val === null || val === undefined || String(val).trim() === "";
   const showVal = val => miss(val) ? '<span class="missing">미기재 · 미검증</span>' : e(val);
   const badge = status => { const s = STATUS[status] || STATUS.unknown; return `<span class="status-chip ${s.className}">${e(s.label)}</span>`; };
@@ -176,7 +179,7 @@ if (typeof document !== "undefined") {
     }
     const reviews = getOrderReviews(state.reviews, order.order_id);
     const shift = currentShift();
-    const allowAck = canAcknowledge(order, shift) && !reviews.some(r => r.shift_id === shift.shift_id && r.confirmed_at === shift.simulated_now);
+    const allowAck = canAcknowledge(order, shift) && !reviews.some(r => r.shift_id === shift.shift_id && r.confirmed_at === shift.simulated_now && (r.order_revision??0)===(order.order_revision??0));
     const reviewHistory = reviews.length
       ? reviews.map(r => `<div class="review-row"><strong>${e(getNurseName(r.nurse_id))}</strong><span>${e(formatTime(r.confirmed_at))}</span><small>열람 확인 · ${e(r.shift_id)}${r.session_only ? " · 현재 탭에서만 유지" : " · 예시 기록"}</small></div>`).join("")
       : '<p class="review-empty">열람 확인 기록 없음</p>';
