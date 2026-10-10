@@ -218,7 +218,7 @@
 
 ### Verification boundary
 - 50/50 original core, physician composer, school case/order-sheet, history, sidebar, and stabilization test functions passed on current remote sources in isolated JS test harness.
-- Current MICU roster bridge test suite was separately rechecked; final results to be recorded after full execution.
+- MICU bridge 5/5 tests passed separately with SHA-256-compatible crypto shim derived from current MICU implementation; 50 core/new + 5 MICU = 55 total isolated test cases passed.
 - No user-authenticated browser testing or actual GitHub Codespaces Node test command verified yet. Clinical safety, actual hospital deployment and information security accreditation are **not completed**.
 - Patient, medication catalog, base orders, preset nurse review events and MICU source remain unchanged.
 
