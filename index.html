@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>PRN Order Viewer v0.2.1 — 교육용</title>
+  <title>PRN Order Viewer v0.3 — 교육용</title>
   <link rel="stylesheet" href="./styles.css">
   <script src="./app.js" defer></script>
+  <script src="./order-composer.js" defer></script>
+  <script src="./doctor-ui.js" defer></script>
   <script src="./roster-bridge.js" defer></script>
   <script src="./roster-bridge-ui.js" defer></script>
 </head>
@@ -16,7 +18,7 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">+</span>
         <div>
-          <div class="brand-title">PRN Order Viewer <span class="version">v0.2.1</span></div>
+          <div class="brand-title">PRN Order Viewer <span class="version">v0.3</span></div>
           <div class="brand-subtitle">가상 약물 처방 조회 · 독립형 교육 시뮬레이터</div>
         </div>
       </div>
@@ -54,6 +56,37 @@
         <div id="micuRosterResult" class="roster-result" role="status" aria-live="polite">연결되지 않음. 기존 PRN 가상 로그인은 별도로 유지됩니다.</div>
         <div id="micuRosterPeople" class="roster-people" aria-label="읽기 전용 근무자 명단"></div>
         <p class="roster-privacy">파일은 현재 브라우저에서만 처리되며 GitHub 저장소·서버·브라우저 저장소에 올리거나 저장하지 않습니다. MICU의 근무표 원본과 수정 이력에도 영향을 주지 않습니다. 전체 백업에는 직원명과 이력이 포함될 수 있습니다.</p>
+      </section>
+
+      <section class="composer-panel" id="composerSection" aria-label="가상 의사 약물처방 입력">
+        <div class="composer-header">
+          <div><div class="section-eyebrow">PRESCRIBER · SIMULATED</div><strong>의사 약물 처방 입력 · 교육용</strong>
+            <p>현재 환자에게 가상 약물처방을 추가해 간호사 조회 화면에서 확인합니다. 실제 처방·서명·투약 지시 아님.</p></div>
+          <button id="composerToggle" type="button" aria-expanded="false" aria-controls="composerPanel">처방 입력 열기</button>
+        </div>
+        <div id="composerPanel" hidden>
+          <div class="composer-current"><strong>처방 대상</strong> <span id="composerPatient">환자 정보 불러오는 중</span>
+            <span class="composer-extra">향후 검사·드레싱·간호처방으로 확장 가능하도록 데이터 영역 분리. 이번 버전은 약물만 입력.</span></div>
+          <form id="composerForm">
+            <div class="composer-fields">
+              <label>가상 처방 의사<select id="composerProvider" required></select></label>
+              <label>처방 형태<select id="composerMode"><option value="regular">정규</option><option value="prn">PRN 필요시</option><option value="emergency">응급(STAT)</option></select></label>
+              <label class="composer-span2">약물 성분 (교육용 후보 107종)<select id="composerMedication" required></select></label>
+              <label>1회 투여량·단위<input id="composerDose" type="text" maxlength="120" placeholder="시연용 용량·단위를 직접 입력" required></label>
+              <label>투여 경로<input id="composerRoute" type="text" maxlength="100" placeholder="시연용 경로 입력" required></label>
+              <label>횟수·빈도·간격<input id="composerFrequency" type="text" maxlength="180" placeholder="시연용 횟수 또는 간격을 입력" required></label>
+              <label>모의 처방 시각 (한국 표준시)<input id="composerWhen" type="datetime-local" required></label>
+              <label>투여 시작·예정 시각 (선택)<input id="composerScheduled" type="datetime-local"></label>
+              <label>적응증·처방 목적<input id="composerIndication" type="text" maxlength="180" placeholder="특히 PRN은 필수"></label>
+              <label id="composerConditionRow" class="composer-span2" hidden>PRN 세부 투여 조건<input id="composerCondition" type="text" maxlength="300" placeholder="가상 PRN 판단조건을 직접 입력"></label>
+              <label>최대량·최대횟수 지시 (선택)<input id="composerLimit" type="text" maxlength="180" placeholder="미입력 시 미기재로 유지"></label>
+              <label class="composer-span2">기타 처방 지시 (선택)<textarea id="composerSpecial" maxlength="600" rows="2" placeholder="추가 관찰·시연 메모"></textarea></label>
+            </div>
+            <p class="composer-mode-hint" id="composerModeHint"></p>
+            <div class="composer-actions"><button type="submit" disabled>가상 약물처방 등록</button>
+              <p id="composerMessage" role="status" aria-live="polite">등록하면 해당 환자의 전체 약물 또는 PRN 탭에 즉시 반영됩니다. **탭 메모리에만 보존**합니다.</p></div>
+          </form>
+        </div>
       </section>
       <section class="orders-panel" aria-label="약물 처방">
         <div class="panel-head">
