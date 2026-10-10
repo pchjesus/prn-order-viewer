@@ -82,3 +82,17 @@
 - `nurse_id`는 `shift_id`의 로그인 간호사와 반드시 일치, `confirmed_at`은 근무시간 안에 있어야 함.
 - 앱에서 새로 만드는 이벤트는 `session_only=true`; 입력 파일을 수정하지 않고 메모리에만 저장.
 - 처방정보 확인 ≠ 처방 승인 ≠ 투약 수행 기록. 모든 의사는 가상 이름/코드.
+
+## v0.3 가상 의사 입력 시 추가 필드 (현재 탭 메모리 한정)
+
+- `order_domain`: `medication`; 미래 `service`/`procedure`는 별도 검증 객체가 필요함.
+- `order_mode`: `regular` / `prn` / `emergency` (UI 입력 선택값).
+- `order_type`: 기존 PRN 필터 호환을 위해 `regular` / `prn`만 사용. `emergency` 선택은 `regular`로 표시하고 `order_priority=stat`를 부여.
+- `order_priority`: `routine` / `stat` (긴급도 축). 실제 임상 우선순위 결정에 사용하지 않음.
+- `administration_condition`: PRN 세부 투여조건 문자열.
+- `scheduled_at`: 선택적 가상 투여 시작/예정 시각(시간대 포함).
+- `simulated_input`: 의사 입력 화면에서 생성된 **비영속·비임상** 기록임을 표시.
+- `is_clinically_complete=false`, `dose_review_status=simulation_unverified`: 모든 가상 입력에 필수.
+- `createEnvelope()`: 통합 연구용 가상 공통 참조 구조; 실제 FHIR 호환은 주장하지 않음.
+
+자세한 모델 분리 및 다른 프로젝트와의 ID 매핑 제한은 `docs/THREE-PROJECT-CONVERGENCE-v0.3.md` 참조.
