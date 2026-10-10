@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>PRN Order Viewer v0.2 — 교육용</title>
+  <title>PRN Order Viewer v0.2.1 — 교육용</title>
   <link rel="stylesheet" href="./styles.css">
   <script src="./app.js" defer></script>
+  <script src="./roster-bridge.js" defer></script>
+  <script src="./roster-bridge-ui.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
@@ -14,7 +16,7 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">+</span>
         <div>
-          <div class="brand-title">PRN Order Viewer <span class="version">v0.2</span></div>
+          <div class="brand-title">PRN Order Viewer <span class="version">v0.2.1</span></div>
           <div class="brand-subtitle">가상 약물 처방 조회 · 독립형 교육 시뮬레이터</div>
         </div>
       </div>
@@ -38,6 +40,20 @@
         <label class="session-label" for="sessionSelect">모의 로그인 근무조 <select id="sessionSelect" disabled><option>가상 근무정보를 불러오는 중…</option></select></label>
         <div class="session-context" id="sessionContext">모의 로그인 정보를 불러오는 중…</div>
         <span class="session-warning">모의 로그인 · 실제 인증 아님</span>
+      </section>
+      <section class="roster-bridge-panel" aria-label="MICU 근무표 조회 전용 연결">
+        <div class="roster-bridge-title"><strong>MICU 근무표 연결 · 시범 기능</strong><span class="roster-tag">파일 가져오기 · 조회 전용</span></div>
+        <p class="roster-help">MICU 화재대피 앱의 '전체 백업' JSON에서 선택 날짜·D/E/N 근무 간호사 명단만 읽습니다. 별도 인증·서명·처방 확인자 변경은 하지 않습니다.</p>
+        <div class="roster-controls">
+          <label>근무 날짜 <input id="micuRosterDate" type="date" aria-label="근무표 조회 날짜"></label>
+          <label>근무조 <select id="micuRosterDuty" aria-label="근무표 조회 근무조"><option value="D">D</option><option value="E">E</option><option value="N">N</option></select></label>
+          <label>MICU 전체 백업 JSON <input id="micuRosterFile" type="file" accept=".json,application/json" aria-label="MICU 전체 백업 파일 선택"></label>
+        </div>
+        <label class="roster-consent"><input id="micuRosterConsent" type="checkbox"> 비식별·교육용으로 사용이 허용된 파일이며, 실제 병원 근무표나 개인정보를 무단 반출하지 않았음을 확인합니다.</label>
+        <div class="roster-actions"><button id="micuRosterImport" type="button">선택 날짜 근무자 조회</button><button id="micuRosterClear" type="button">연결 초기화</button></div>
+        <div id="micuRosterResult" class="roster-result" role="status" aria-live="polite">연결되지 않음. 기존 PRN 가상 로그인은 별도로 유지됩니다.</div>
+        <div id="micuRosterPeople" class="roster-people" aria-label="읽기 전용 근무자 명단"></div>
+        <p class="roster-privacy">파일은 현재 브라우저에서만 처리되며 GitHub 저장소·서버·브라우저 저장소에 올리거나 저장하지 않습니다. MICU의 근무표 원본과 수정 이력에도 영향을 주지 않습니다. 전체 백업에는 직원명과 이력이 포함될 수 있습니다.</p>
       </section>
       <section class="orders-panel" aria-label="약물 처방">
         <div class="panel-head">
