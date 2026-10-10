@@ -132,7 +132,7 @@ if (typeof document !== "undefined") {
     getVisibleOrders, enrichOrders, getStatusKeys, escapeHTML: e } = PRNCore;
   const byId = id => document.getElementById(id);
   const state = { patientId: null, tab: "all", query: "", status: "all", selectedOrderId: null,
-    orders: [], patients: [], shifts: [], reviews: [], sessionShiftId: null, loading: true };
+    orders: [], patients: [], shifts: [], reviews: [], medCatalog: [], sessionShiftId: null, loading: true };
   const currentShift = () => state.shifts.find(s => s.shift_id === state.sessionShiftId);
   const formatTime = time => time ? String(time).replace("T", " ").replace(/\+09:00$/, " KST") : "미기재";
   const getNurseName = nurseId => state.shifts.find(s => s.nurse_id === nurseId)?.nurse_name ?? "가상 간호사 정보 없음";
@@ -141,6 +141,7 @@ if (typeof document !== "undefined") {
   const showVal = val => miss(val) ? '<span class="missing">미기재 · 미검증</span>' : e(val);
   const badge = status => { const s = STATUS[status] || STATUS.unknown; return `<span class="status-chip ${s.className}">${e(s.label)}</span>`; };
   const htmlStatus = status => STATUS[status]?.label ?? "상태 미확인";
+  const modeText = order => order.order_priority === "stat" ? "응급(STAT)" : order.order_type === "prn" ? "PRN" : "정규";
 
   function setTab(tab) {
     state.tab = tab;
@@ -182,12 +183,15 @@ if (typeof document !== "undefined") {
     content.innerHTML = `
       <div class="detail-title">${e(order.ingredient_name_ko)}</div>
       <div class="detail-code">${e(order.order_id)} · ${e(order.medication_catalog_id)}</div>
-      <div class="detail-badges">${badge(order.order_status)}<span class="type-chip">${order.order_type === "prn" ? "PRN" : "정규"} 처방</span></div>
+      <div class="detail-badges">${badge(order.order_status)}<span class="type-chip">${modeText(order)} 처방</span></div>
       <div class="detail-alert">용량·경로·간격은 화면 동작을 확인하기 위한 가상 예시이며 임상 검증을 받지 않았습니다. 빈 값은 미기재로 표시합니다. 실제 투약에 사용하지 마세요.</div>
       <div class="details-grid">
         ${field("가상 처방명", order.order_display_name, true)}
         ${field("처방자", `${order.prescriber_name || "미기재"} (${order.prescriber_id || "ID 없음"})`,true)}
         ${field("처방 작성", formatTime(order.ordered_at), true)}
+        ${field("모의 처방 우선순위", order.order_priority === "stat" ? "응급(STAT)" : "일반")}
+        ${field("모의 예정 시각", order.scheduled_at)}
+        ${field("PRN 투여 조건", order.administration_condition, true)}
         ${field("처방 상태", htmlStatus(order.order_status))}
         ${field("약물 분류", order.category_name_ko)}
         ${field("1회 용량", order.dose_instruction)}
@@ -243,7 +247,7 @@ if (typeof document !== "undefined") {
       body.innerHTML = `<tr><td colspan="7" class="table-message">${e(msg)}</td></tr>`;
     } else {
       body.innerHTML = visible.map(o => `<tr tabindex="0" role="button" aria-label="${e(o.ingredient_name_ko)} 가상 처방 상세 보기" data-order-id="${e(o.order_id)}" class="${o.order_id === state.selectedOrderId ? "is-selected" : ""}">
-        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${o.order_type === "prn" ? "PRN" : "정규"}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span></td>
+        <td>${badge(o.order_status)}</td><td><span class="drug-name">${e(o.ingredient_name_ko)}</span><span class="drug-sub">${e(o.order_id)} · ${modeText(o)}</span><span class="drug-sub">처방 ${e(o.prescriber_name || "미기재")} · 열람 확인 ${e(lastReview(o.order_id) ? getNurseName(lastReview(o.order_id).nurse_id) : "없음")}</span></td>
         <td>${showVal(o.dose_instruction)}</td><td>${showVal(o.route_instruction)}</td><td>${showVal(o.indication)}</td><td>${showVal(o.frequency_instruction)}</td>
         <td><button type="button" class="detail-link" data-detail-id="${e(o.order_id)}" aria-label="${e(o.ingredient_name_ko)} 상세 보기">보기</button></td></tr>`).join("");
     }
@@ -269,6 +273,7 @@ if (typeof document !== "undefined") {
       if (response.some(r => !r.ok)) throw new Error("가상 데이터 파일을 찾을 수 없습니다.");
       const [catalog, orders, patients, shifts, reviews] = await Promise.all(response.map(r => r.json()));
       validate(catalog, orders, patients, shifts, reviews);
+      state.medCatalog = catalog;
       state.orders = enrichOrders(catalog, orders);
       state.patients = patients; state.shifts = shifts; state.reviews = reviews;
       state.sessionShiftId = shifts[0]?.shift_id ?? null;
@@ -292,6 +297,7 @@ if (typeof document !== "undefined") {
       byId("tabPrn").disabled = false;
       state.loading = false;
       setTab("all");
+      document.dispatchEvent(new Event("prn-data-ready"));
     } catch (error) {
       state.loading = true;
       byId("ordersBody").innerHTML = `<tr><td colspan="7" class="table-message"><strong>가상 데이터 로드 실패</strong><p style="margin-top:9px">${e(error.message)}</p><p style="margin-top:9px">HTML을 직접 열지 말고 프로젝트 폴더에서 <code>python -m http.server 8000</code>을 실행한 뒤 http://localhost:8000 으로 접속하세요.</p><button type="button" class="detail-link" id="retryLoad" style="margin-top:12px">다시 시도</button></td></tr>`;
@@ -301,6 +307,34 @@ if (typeof document !== "undefined") {
     }
   }
 
+  // Narrow controlled interface for the simulation-only prescriber screen.
+  // No backend persistence; no access to or mutation of nurse login/review state.
+  window.PRNComposerHost = Object.freeze({
+    context: () => ({
+      patientId:state.patientId,
+      patients:state.patients.slice(),
+      catalog:state.medCatalog.slice(),
+      existing:state.orders.slice(),
+      doctors:[...new Map(state.orders.filter(o => o.prescriber_id && o.prescriber_name)
+        .map(o => [o.prescriber_id,{prescriber_id:o.prescriber_id,prescriber_name:o.prescriber_name}])).values()],
+      simulatedNow:currentShift()?.simulated_now ?? null,
+      ready:!state.loading
+    }),
+    addOrder: (order) => {
+      if(state.loading) throw new Error("가상 처방 정보를 불러오는 중입니다.");
+      if(!order?.simulated_input || order.order_domain!=="medication" || !["regular","prn"].includes(order.order_type)
+        || !["routine","stat"].includes(order.order_priority) ||
+        order.patient_id!==state.patientId || state.orders.some(o=>o.order_id===order.order_id)) {
+        throw new Error("현재 환자와 연관되지 않거나 중복된 가상 처방입니다.");
+      }
+      validate(state.medCatalog,[order],state.patients);
+      state.orders.push(...enrichOrders(state.medCatalog,[order]));
+      setTab(order.order_type==="prn" ? "prn" : "all");
+      state.selectedOrderId=order.order_id;
+      render();
+      return order.order_id;
+    }
+  });
   byId("tabAll").addEventListener("click", () => setTab("all"));
   byId("tabPrn").addEventListener("click", () => setTab("prn"));
   byId("sessionSelect").addEventListener("change", ev => { state.sessionShiftId = ev.target.value; render(); });
