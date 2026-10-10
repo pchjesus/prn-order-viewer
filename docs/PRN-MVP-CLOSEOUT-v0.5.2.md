@@ -15,6 +15,13 @@
 4. 검색 힌트에 PRN 조건 포함. 검색/환자분리/PRN 유효 우선 정렬/변경 기능 자체는 변경하지 않는다.
 5. 브라우저 검사에서 **실제 HTTP, 전체 JS 로드, 합성 JSON 사용**하도록 전환하고 GitHub Actions의 Node.js·Chromium 테스트 자동화를 추가한다.
 
+## 실제 검증 결과
+
+- `9a3f5677f9d85ae4cca2d45e88d13d81621f0b05` 커밋에서 GitHub Actions [38035559275](https://github.com/pchjesus/prn-order-viewer/actions/runs/38035559275)의 **전체 실행 conclusion=success** 확인.
+- Node.js 22 전체 단위·회귀 테스트: **74/74 통과(실패 0)**. 기존 MICU 백업 브리지 5건 포함.
+- Playwright/Chromium 실제 로컬 HTTP 시나리오: **통과**. 네 명의 합성 환자, PRN/정규 탐색, 상태/검색, 누락값, 모의 간호사 열람 확인, 가상의사 입력과 처방 변경, 새로고침 후 임시 데이터 삭제, 모바일 조회/상세 닫기 검증.
+- 이 결과는 실제 사용자와 함께 수행한 사용성 실험·최종 실기기 육안 검수·임상 안전성 검증을 대체하지 않는다.
+
 ## 수용 기준 및 검증 경계
 - `node --test tests/*.test.cjs`는 전체 단위 테스트 및 MICU 백업 브리지 테스트를 포함한다.
 - `python tests/browser_smoke.py`는 실제 localhost에서 데스크톱/모바일, 4명 환자, 환자별 전체/PRN·필터, 누락 PRN 조건, 모의 열람 확인, 신규 가상 PRN 입력→변경→버전, 새로고침 초기화를 검사한다.
