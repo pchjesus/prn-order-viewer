@@ -65,7 +65,9 @@ async def main():
                 await page.locator("#teachingRosterFile").set_input_files({"name":"2026_10_synthetic.xlsx","mimeType":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","buffer":data})
                 await page.wait_for_function('document.querySelector("#teachingRosterMessage").textContent.includes("Excel을 읽었습니다")')
                 await page.locator("#teachingRosterAnalyze").click()
-                await page.wait_for_function('document.querySelector("#teachingRosterMessage").textContent.includes("해석을 완료")')
+                await page.wait_for_timeout(700)
+                analyze_status=await page.locator("#teachingRosterMessage").inner_text()
+                assert "해석을 완료" in analyze_status, "Excel parser message: "+analyze_status
                 assert "4명" in await page.locator("#teachingRosterPreview").inner_text()
                 await page.locator("#teachingRosterVerify").check()
                 assert await page.locator("#teachingRosterSave").is_enabled()
