@@ -35,7 +35,6 @@ async def main():
                 assert await page.locator("#composerProvider").input_value()=="SIM-MD-103"
                 await page.locator("#patientSelect").select_option("DEMO-P001")
                 await page.locator('[data-nav="handoff"]').click()
-                await page.locator("#sheetToggle").click()
                 await page.locator(".kardex-type-fold").first.wait_for()
                 assert await page.locator(".kardex-type-fold").count()==3
                 assert await page.locator('.kardex-type-fold[data-kind="prn"] .kardex-order-item').count()==4
@@ -98,7 +97,6 @@ async def main():
                 mobile.on("pageerror",lambda e:errors.append(str(e)))
                 await mobile.goto(url,wait_until="networkidle")
                 await mobile.locator('[data-nav="handoff"]').click()
-                await mobile.locator("#sheetToggle").click()
                 assert await mobile.locator(".kardex-type-fold").count()==3
                 assert not errors, errors
                 print("PASS v0.6.0 Chromium: patient profiles, prescriber defaults, Kardex folds, XLSX parse/store/use/reload/delete, old JSON preserved, mobile.")
