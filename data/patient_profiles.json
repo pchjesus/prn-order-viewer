@@ -1,0 +1,212 @@
+[
+  {
+    "patient_id": "DEMO-P001",
+    "source": "synthetic-only",
+    "primary_physician": {
+      "id": "SIM-MD-101",
+      "name": "서지훈 MD"
+    },
+    "allergy": {
+      "status": "unknown",
+      "note": "알레르기 정보가 제공되지 않음. 없음으로 해석하지 않음."
+    },
+    "clinical_context": {
+      "admission_reason": "복부 수술 후 회복 중",
+      "prior_history": [
+        "고혈압(가상)",
+        "수술 후 오심 경험"
+      ],
+      "current_state": "수술 2일째. 경구 섭취를 시작했고 간헐적 통증·오심이 있는 설정."
+    },
+    "assessments": {
+      "observations": [
+        "수술 후 통증, 오심 및 배변 상태 관찰 시나리오"
+      ],
+      "vitals": {
+        "status": "not_provided"
+      },
+      "labs": {
+        "status": "not_provided"
+      },
+      "device_status": {
+        "status": "not_provided"
+      }
+    },
+    "handoff": {
+      "points": [
+        "수술 후 환자의 활력징후 변화와 불편감을 파악하는 교육용 시나리오.",
+        "통증의 위치·양상, 오심 및 배변 상태를 종합해 기록하는 모의 실습.",
+        "창상·배액관이 실제로 있는지는 시뮬레이션 지시에 따라 확인하며, 자료만으로 존재를 단정하지 않음."
+      ],
+      "monitoring": [
+        "V/S",
+        "통증 사정(PQRST/NRS)",
+        "오심·배변 상태"
+      ],
+      "topics": [
+        "활력징후 측정",
+        "정맥수액 관련 관찰",
+        "통증 사정",
+        "배액 관련 관찰"
+      ]
+    },
+    "documentation_note": "가상 정보만 표시합니다. 객관적 측정치·장치·알레르기 여부는 시나리오에 없으면 미확인."
+  },
+  {
+    "patient_id": "DEMO-P002",
+    "source": "synthetic-only",
+    "primary_physician": {
+      "id": "SIM-MD-103",
+      "name": "윤민석 MD"
+    },
+    "allergy": {
+      "status": "unknown",
+      "note": "알레르기 정보가 제공되지 않음. 없음으로 해석하지 않음."
+    },
+    "clinical_context": {
+      "admission_reason": "검사 후 단기 관찰",
+      "prior_history": [
+        "위식도역류 증상(가상)"
+      ],
+      "current_state": "검사 후 회복 관찰 중. 현 시나리오에는 PRN 처방이 등록되지 않음."
+    },
+    "assessments": {
+      "observations": [
+        "PRN 0건 및 정규 처방 구분 검증"
+      ],
+      "vitals": {
+        "status": "not_provided"
+      },
+      "labs": {
+        "status": "not_provided"
+      },
+      "device_status": {
+        "status": "not_provided"
+      }
+    },
+    "handoff": {
+      "points": [
+        "검사 후 단기 회복 관찰을 위한 가상 사례.",
+        "환자별 처방이 달라질 수 있으며, PRN 0건도 정상적인 조회 결과임을 확인하는 과제.",
+        "불명확한 처방 내용은 임의로 해석하지 않고 원문과 담당자를 확인하는 흐름을 연습."
+      ],
+      "monitoring": [
+        "V/S",
+        "증상 변화",
+        "PRN 처방 없음 확인"
+      ],
+      "topics": [
+        "활력징후 측정",
+        "간호 정보 인계",
+        "위험 사정"
+      ]
+    },
+    "documentation_note": "가상 정보만 표시합니다. 객관적 측정치·장치·알레르기 여부는 시나리오에 없으면 미확인."
+  },
+  {
+    "patient_id": "DEMO-P003",
+    "source": "synthetic-only",
+    "primary_physician": {
+      "id": "SIM-MD-104",
+      "name": "조현서 MD"
+    },
+    "allergy": {
+      "status": "unknown",
+      "note": "알레르기 정보가 제공되지 않음. 없음으로 해석하지 않음."
+    },
+    "clinical_context": {
+      "admission_reason": "만성 폐쇄성 기도질환 악화 관찰",
+      "prior_history": [
+        "기도질환(가상)",
+        "복부팽만",
+        "불안 증상"
+      ],
+      "current_state": "기관지경련 관련 증상 관찰. 이전 흡입 처방은 중지되고 재처방된 상태. 진정 관련 처방은 보류됨."
+    },
+    "assessments": {
+      "observations": [
+        "동일 약물의 유효·중지 처방, 보류 상태 및 적응증 누락 시나리오"
+      ],
+      "vitals": {
+        "status": "not_provided"
+      },
+      "labs": {
+        "status": "not_provided"
+      },
+      "device_status": {
+        "status": "not_provided"
+      }
+    },
+    "handoff": {
+      "points": [
+        "기도질환의 증상 변화를 평가하도록 구성한 가상 시나리오.",
+        "호흡 상태·SpO₂ 등 관찰 내용과 관련 처방을 따로 조회하는 연습.",
+        "기도 흡인·산소요법은 별도의 처방/수행 영역이 필요하다는 확장 사례이며 현재 환자에게 수행됐다는 뜻이 아님."
+      ],
+      "monitoring": [
+        "호흡수·노력",
+        "SpO₂",
+        "동일 약물의 중지·재처방"
+      ],
+      "topics": [
+        "산소화",
+        "산소포화도 측정",
+        "호흡 상태 사정",
+        "필요시 처방 구분"
+      ]
+    },
+    "documentation_note": "가상 정보만 표시합니다. 객관적 측정치·장치·알레르기 여부는 시나리오에 없으면 미확인."
+  },
+  {
+    "patient_id": "DEMO-P004",
+    "source": "synthetic-only",
+    "primary_physician": {
+      "id": "SIM-MD-105",
+      "name": "오세진 MD"
+    },
+    "allergy": {
+      "status": "unknown",
+      "note": "알레르기 정보가 제공되지 않음. 없음으로 해석하지 않음."
+    },
+    "clinical_context": {
+      "admission_reason": "피부 가려움 및 알레르기 증상",
+      "prior_history": [
+        "계절성 알레르기 증상(가상)",
+        "간헐적 두통"
+      ],
+      "current_state": "피부 가려움과 눈 가려움을 호소하는 안정된 가상 성인 사례."
+    },
+    "assessments": {
+      "observations": [
+        "항히스타민·외용제·점안제 및 경구 PRN 처방 표시 테스트"
+      ],
+      "vitals": {
+        "status": "not_provided"
+      },
+      "labs": {
+        "status": "not_provided"
+      },
+      "device_status": {
+        "status": "not_provided"
+      }
+    },
+    "handoff": {
+      "points": [
+        "피부 및 안구 증상과 약물 처방을 함께 탐색하는 가상 사례.",
+        "경구·외용·점안 제형이 같은 화면에서 어떻게 구분되는지 확인.",
+        "응급 반응의 진단과 투약 결정은 앱 기능이 아닌 전문 의료인 판단 영역으로 유지."
+      ],
+      "monitoring": [
+        "피부·점막 상태",
+        "증상 발생 시각",
+        "제형·경로"
+      ],
+      "topics": [
+        "피부 상태 관찰",
+        "약물 제형 구별",
+        "증상 변화 인계"
+      ]
+    },
+    "documentation_note": "가상 정보만 표시합니다. 객관적 측정치·장치·알레르기 여부는 시나리오에 없으면 미확인."
+  }
+]

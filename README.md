@@ -1,10 +1,19 @@
-# PRN Order Viewer v0.5.2 — Synthetic EMR PRN Medication Viewer
+# PRN Order Viewer v0.6.0 — Synthetic EMR PRN Medication Viewer
 
 > **EDUCATIONAL PROTOTYPE / SYNTHETIC DATA ONLY**
 >
 > 실제 가톨릭중앙의료원 nU 또는 서울성모병원 공식 시스템과 관계없는 독립형 교육·시연용 웹앱.
 > **실제 환자정보, 실제 처방코드, 실제 병원 프로토콜을 포함하지 않음.**
 > **실제 투약·임상적 판단에 사용 금지.**
+
+## v0.6.0 — 교육용 균형 개선형 (2026-10-13)
+
+- **환자별 구조화 교육 프로필**을 별도 `data/patient_profiles.json`에 추가. 기존 네 환자/18건의 가상 처방 데이터 불변. 주치의(환자 정보)와 처방 작성자(개별 약물 처방)를 구분한다.
+- **Kardex는 정규/PRN/STAT 유형별 접이식 목록과 개별 처방 상세**로 재구성. 원본·버전 이력은 유지하며 미입력 임상 수치를 만들어내지 않는다.
+- **Excel 근무표 직접 가져오기**, 시트·행/열 확인, 월별 **저장/사용/삭제** 추가. 합성·허용된 직원 데이터만 PRN 전용 `prnRosterTeachingDB_v1` IndexedDB에 보관; 원본 Excel 파일 자체를 저장하지 않는다.
+- 기존 **MICU 백업 JSON 조회는 유지**하며 PRN 모의 간호사 로그인/열람 확인과 근무표는 연동하지 않는다. 기존 PRN 처방 입력·수정 및 열람 이력은 탭 메모리 상태 유지.
+- 구현 상세와 위험/회귀 범위: [v0.6.0 구현 설계](docs/BALANCED-IMPROVEMENT-v0.6.0.md).
+- 자동검증 통과 여부는 GitHub Actions 실행 결과 확인 후 확정. **실제 nU·실직원·환자 데이터를 입력하지 않는다.**
 
 ## 확정된 운영 방향 — PRN 처방 확인 교육용 (2026-10-10)
 

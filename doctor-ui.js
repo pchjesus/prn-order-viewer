@@ -22,7 +22,10 @@
     const previousProvider=provider.value,previousMedication=med.value,previousTime=when.value;
     provider.replaceChildren();
     for(const d of ctx.doctors) append(provider,d.prescriber_name+" ("+d.prescriber_id+")",d.prescriber_id);
-    if([...provider.options].some(o=>o.value===previousProvider))provider.value=previousProvider;
+    const primary=ctx.profiles?.find(p=>p.patient_id===ctx.patientId)?.primary_physician?.id;
+    if(!refresh.lastPatient||refresh.lastPatient!==ctx.patientId)provider.value=primary||provider.value;
+    else if([...provider.options].some(o=>o.value===previousProvider))provider.value=previousProvider;
+    refresh.lastPatient=ctx.patientId;
     med.replaceChildren();
     append(med,"약물 성분을 선택하세요","");
     for(const item of ctx.catalog) append(med,item.ingredient_name_ko+" · "+item.category_name_ko,item.medication_catalog_id);

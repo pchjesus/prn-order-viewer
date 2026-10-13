@@ -27,4 +27,6 @@ jobs:
           python -m pip install "playwright==1.55.0"
           python -m playwright install --with-deps chromium
       - name: Real local HTTP browser regression
-        run: python tests/browser_smoke.py
+        run: |
+          python tests/browser_smoke.py
+          python tests/v0.6.0-browser.py

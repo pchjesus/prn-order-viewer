@@ -146,7 +146,7 @@ if (typeof document !== "undefined") {
     getVisibleOrders, enrichOrders, getStatusKeys, getPrnConfirmation, escapeHTML: e } = PRNCore;
   const byId = id => document.getElementById(id);
   const state = { patientId: null, tab: "all", query: "", status: "all", selectedOrderId: null,
-    orders: [], patients: [], shifts: [], reviews: [], medCatalog: [], orderEvents: [], sessionShiftId: null, loading: true };
+    orders: [], patients: [], profiles: [], shifts: [], reviews: [], medCatalog: [], orderEvents: [], sessionShiftId: null, loading: true };
   const currentShift = () => state.shifts.find(s => s.shift_id === state.sessionShiftId);
   const formatTime = time => time ? String(time).replace("T", " ").replace(/\+09:00$/, " KST") : "미기재";
   const getNurseName = nurseId => state.shifts.find(s => s.nurse_id === nurseId)?.nurse_name ?? "가상 간호사 정보 없음";
@@ -292,10 +292,13 @@ if (typeof document !== "undefined") {
     byId("visibleCount").textContent = `${visible.length}건`;
     const patient = state.patients.find(p => p.patient_id === state.patientId);
     byId("patientContext").textContent = `${patient ? patient.display_name : state.patientId} · 전체 ${total.length}건 / PRN ${prnTotal.length}건`;
+    const profile=window.PRNPatientProfiles?.find(state.profiles,state.patientId);
+    const extra=patient&&profile?window.PRNPatientProfiles.rows(profile,patient).map(([key,value])=>
+      `<div class="patient-profile-entry"><strong>${e(key)}</strong><span>${showVal(value)}</span></div>`).join(""):"";
     byId("patientSummary").innerHTML = patient ?
       `<div><strong>${e(patient.display_name)} (${e(patient.patient_id)})</strong> · ${e(patient.age)}세 / ${e(patient.sex)} · ${e(patient.bed)} · 입원 ${e(patient.admission_date)}</div>
-       <div><strong>현재 병력:</strong> ${e(patient.primary_problem)} — ${e(patient.current_condition)}</div>
-       <div><strong>과거력:</strong> ${e(patient.medical_history.join(", "))} · <strong>관찰 초점:</strong> ${e(patient.care_note)}</div>` : "가상 환자 정보가 없습니다.";
+       <div><strong>기존 병력:</strong> ${e(patient.primary_problem)} — ${e(patient.current_condition)}</div>
+       <div class="patient-profile-grid">${extra}</div><p class="simulation-footnote">확인되지 않은 알레르기·검사·장치 항목은 의학적 정상 또는 이상 소견을 의미하지 않습니다.</p>` : "가상 환자 정보가 없습니다.";
     const shift = currentShift();
     byId("sessionContext").textContent = shift ? `로그인 ${shift.login_id} · ${shift.nurse_name} · 모의 현재 시각 ${formatTime(shift.simulated_now)}` : "로그인 세션을 선택해 주세요";
     byId("viewNote").textContent = state.tab === "prn" ? "PRN 처방은 모든 상태를 표시하고 유효 처방을 먼저 배치합니다. 별도 조건이 없는 가상 처방은 상세에서 미기재로 표시합니다. 상태는 투약 가능 여부가 아닙니다." : "정규·PRN 약물 처방을 함께 표시합니다. PRN 탭을 눌러 필요한 처방만 모아 볼 수 있습니다.";
@@ -329,15 +332,16 @@ if (typeof document !== "undefined") {
     byId("ordersBody").innerHTML = '<tr><td colspan="7" class="table-message">가상 데이터를 불러오는 중…</td></tr>';
     try {
       const urls = ["./data/medication_catalog_candidates.json", "./data/simulated_orders_SCHEMA_ONLY.json",
-        "./data/patients.json", "./data/staff_shifts.json", "./data/verification_events.json"];
+        "./data/patients.json", "./data/staff_shifts.json", "./data/verification_events.json", "./data/patient_profiles.json"];
       const response = await Promise.all(urls.map(url => fetch(url, { cache: "no-store" })));
       if (response.some(r => !r.ok)) throw new Error("가상 데이터 파일을 찾을 수 없습니다.");
-      const [catalog, orders, patients, shifts, reviews] = await Promise.all(response.map(r => r.json()));
+      const [catalog, orders, patients, shifts, reviews, profiles] = await Promise.all(response.map(r => r.json()));
       validate(catalog, orders, patients, shifts, reviews);
+      window.PRNPatientProfiles.validate(patients,profiles);
       state.medCatalog = catalog;
       state.orderEvents = [];
       state.orders = enrichOrders(catalog, orders);
-      state.patients = patients; state.shifts = shifts; state.reviews = reviews;
+      state.patients = patients; state.profiles = profiles; state.shifts = shifts; state.reviews = reviews;
       state.sessionShiftId = shifts[0]?.shift_id ?? null;
       const patientIds = patients.map(p => p.patient_id);
       state.patientId = patientIds[0] ?? null;
@@ -375,6 +379,7 @@ if (typeof document !== "undefined") {
     context: () => ({
       patientId:state.patientId,
       patients:state.patients.slice(),
+      profiles:state.profiles.slice(),
       catalog:state.medCatalog.slice(),
       existing:state.orders.slice(),
       doctors:[...new Map(state.orders.filter(o => o.prescriber_id && o.prescriber_name)

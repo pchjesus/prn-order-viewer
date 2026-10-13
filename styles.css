@@ -143,3 +143,50 @@
 .prn-list-condition.is-missing{color:#956428;font-weight:700}
 .prn-list-revision{color:#875c2b;font-weight:700}
 @media(max-width:450px){.prn-confirmation-grid{grid-template-columns:minmax(0,1fr)}.prn-confirmation .detail-field.full{grid-column:1}}
+
+/* v0.6.0: enhanced patient context and accordion-style Kardex. */
+.patient-profile-grid,.kardex-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
+.patient-profile-entry,.kardex-info-entry{padding:10px 12px;border:1px solid #e0e7ef;border-radius:8px;background:#f8fbfe;display:flex;flex-direction:column;gap:5px;min-width:0;overflow-wrap:anywhere}
+.patient-profile-entry strong,.kardex-info-entry strong{font-size:11px;color:#3b617f}
+.patient-profile-entry span,.kardex-info-entry span{font-size:12px;color:#283f58}
+.simulation-footnote{font-size:11px;color:#8a674b;line-height:1.6;margin-top:11px}
+.kardex-info-fold,.kardex-type-fold{margin:12px 0;border:1px solid #d6e1ed;border-radius:9px;overflow:hidden;background:#fff}
+.kardex-info-fold>summary,.kardex-type-fold>summary{cursor:pointer;padding:14px 16px;font-size:13px;font-weight:750;color:#244d76;background:#f1f6fb;list-style-position:inside}
+.kardex-info-section{padding:10px 16px}
+.kardex-info-section h4{font-size:12px;margin:6px 0;color:#365b79}
+.kardex-info-section li{font-size:12px;line-height:1.6;color:#435970;margin-bottom:4px}
+.kardex-info-grid{padding:0 12px}
+.kardex-order-item{border-top:1px solid #dce5ef;background:#fff}
+.kardex-order-summary{cursor:pointer;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,2fr) 60px;align-items:center;gap:12px;padding:12px 14px;font-size:12px;color:#234766}
+.kardex-order-summary strong,.kardex-order-sub{overflow-wrap:anywhere}
+.kardex-order-sub{font-weight:400;color:#4d657c}
+.kardex-order-status{font-size:11px;font-weight:700;color:#46667f;text-align:right}
+.kardex-order-metadata{padding:8px 14px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.kardex-order-attribute{padding:8px;border:1px solid #e5edf5;background:#f8fbfd;border-radius:6px;display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere}
+.kardex-order-attribute strong{font-size:10px;color:#58718a}
+.kardex-order-attribute span{font-size:12px;color:#294967;white-space:pre-wrap}
+.kardex-order-metadata .sheet-warning{grid-column:1/-1}
+.kardex-empty{padding:12px 16px;font-size:12px;color:#667b90}
+/* Isolated roster library. No existing MICU backup controls are modified. */
+.teaching-roster-library{margin:20px 0;padding:17px;background:#f7fafe;border:1px solid #c8d9ea;border-radius:11px;min-width:0}
+.teaching-roster-library h3,.teaching-roster-library h4{font-size:14px;color:#234c72;margin:3px 0 11px}
+.teaching-roster-library>p{font-size:12px;line-height:1.7;color:#4e6982}
+.teaching-roster-library .roster-controls{margin:14px 0}
+.teaching-roster-preview{background:white;border-radius:8px;border:1px solid #dce6f0;padding:9px 13px;max-height:230px;overflow:auto;font-size:12px;line-height:1.6;color:#405e7d;margin:13px 0}
+.teaching-roster-preview:empty{display:none}
+.teaching-roster-preview ul{padding-left:20px;margin:6px 0}
+#teachingRosterList{display:flex;flex-direction:column;gap:9px;margin:12px 0}
+.teaching-roster-entry{background:#fff;border:1px solid #cfdeec;border-radius:7px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.teaching-roster-entry-title{font-size:12px;font-weight:650;overflow-wrap:anywhere}
+.teaching-roster-entry-actions{display:flex;gap:6px}
+.teaching-roster-entry-actions button{border:1px solid #b3c8dd;background:#fff;border-radius:5px;padding:7px 11px;font-size:11px;cursor:pointer}
+.teaching-roster-entry-actions button:disabled{opacity:.5;cursor:default}
+#teachingRosterMessage{font-size:12px;line-height:1.7;font-weight:650;color:#406689}
+#teachingRosterOnDuty{padding:10px;background:white;border:1px solid #dce6f0;border-radius:8px;font-size:12px;line-height:1.6}
+#teachingRosterOnDuty ul{margin:5px 0;padding-left:20px}
+@media(max-width:650px){
+ .patient-profile-grid,.kardex-info-grid,.kardex-order-metadata{grid-template-columns:minmax(0,1fr)}
+ .kardex-order-summary{grid-template-columns:minmax(0,1fr);gap:3px}
+ .kardex-order-status{text-align:left}
+ .teaching-roster-entry{align-items:flex-start;flex-direction:column}
+}

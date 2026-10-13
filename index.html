@@ -4,8 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>PRN Order Viewer v0.5.2 — 구조화 약물 처방 입력</title>
+  <title>PRN Order Viewer v0.6.0 — 구조화 약물 처방 입력</title>
   <link rel="stylesheet" href="./styles.css">
+  <script src="./patient-profile-model.js" defer></script>
   <script src="./app.js" defer></script>
   <script src="./order-structure.js" defer></script>
   <script src="./order-composer.js" defer></script>
@@ -16,6 +17,12 @@
   <script src="./order-sheet-ui.js" defer></script>
   <script src="./roster-bridge.js" defer></script>
   <script src="./roster-bridge-ui.js" defer></script>
+  <script src="./vendor/xlsx.full.min.js" defer></script>
+  <script src="./roster-import-config.js" defer></script>
+  <script src="./roster-import-parser.js" defer></script>
+  <script src="./roster-library-model.js" defer></script>
+  <script src="./roster-library-store.js" defer></script>
+  <script src="./roster-library-ui.js" defer></script>
   <script src="./workspace-nav.js" defer></script>
 </head>
 <body>
@@ -24,7 +31,7 @@
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">+</span>
         <div>
-          <div class="brand-title">PRN Order Viewer <span class="version">v0.5.2</span></div>
+          <div class="brand-title">PRN Order Viewer <span class="version">v0.6.0</span></div>
           <div class="brand-subtitle">가상 약물 처방 조회 · 임상업무 개선 연구용 프로토타입</div>
         </div>
       </div>
@@ -63,6 +70,32 @@
         <span class="session-warning">모의 로그인 · 실제 인증 아님</span>
       </section>
       <section class="roster-bridge-panel" data-page="roster" hidden aria-label="MICU 근무표 조회 전용 연결">
+        <section class="teaching-roster-library" aria-label="교육용 Excel 근무표 보관함">
+          <h3>교육용 Excel 근무표 가져오기·보관함</h3>
+          <p>가상 근무표 Excel(.xlsx/.xls)을 이 브라우저에서 해석합니다. 원본 Excel 자체는 저장하지 않고, 확인한 날짜·D/E/N·근무자 표만 별도 브라우저 저장소에 보관합니다. PRN 로그인·열람 확인과 자동 연결되지 않습니다.</p>
+          <div class="roster-controls">
+            <label>Excel 근무표 선택 <input id="teachingRosterFile" type="file" accept=".xlsx,.xls" aria-label="교육용 Excel 근무표 선택"></label>
+            <label>시트 <select id="teachingRosterSheet" aria-label="근무표 Excel 시트 선택"></select></label>
+            <label>연도 <input id="teachingRosterYear" type="number" min="2000" max="2100" value="2026"></label>
+            <label>월 <input id="teachingRosterMonth" type="number" min="1" max="12" value="10"></label>
+            <label>날짜 행 (선택) <input id="teachingRosterHeader" placeholder="자동 인식 또는 행 번호"></label>
+            <label>이름 열 (선택) <input id="teachingRosterName" placeholder="자동 인식 또는 B"></label>
+          </div>
+          <div class="roster-actions">
+            <button id="teachingRosterAnalyze" type="button">해석·미리보기</button>
+          </div>
+          <div id="teachingRosterPreview" class="teaching-roster-preview" aria-label="Excel 근무표 해석 결과"></div>
+          <label class="roster-consent"><input id="teachingRosterVerify" type="checkbox"> 환자·실제 직원정보가 없는 가상 또는 사용 승인된 교육용 자료이며 연월·근무코드·이름 열·인원수를 확인했습니다.</label>
+          <div class="roster-actions">
+            <button id="teachingRosterSave" type="button" disabled>근무표 저장 (사용은 별도)</button>
+            <button id="teachingRosterRefresh" type="button">보관함 새로 확인</button>
+          </div>
+          <p id="teachingRosterMessage" role="status" aria-live="polite">파일을 선택하고 해석 결과를 확인해 주세요.</p>
+          <div id="teachingRosterList" aria-label="보관된 교육용 근무표 목록">근무표 보관함 불러오는 중…</div>
+          <h4>현재 사용 근무표의 선택 날짜 근무자</h4>
+          <div id="teachingRosterOnDuty" aria-label="활성 교육용 근무표의 근무자">근무표 확인 중…</div>
+          <p class="roster-privacy">교육용 근무표는 PRN 전용 IndexedDB에만 저장됩니다. 브라우저 데이터 삭제나 다른 기기에서 자동 복구되지 않습니다. MICU 자체 저장소·기존 JSON 백업 조회·약물 처방은 건드리지 않습니다.</p>
+        </section>
         <div class="roster-bridge-title"><strong>MICU 근무표 연결 · 시범 기능</strong><span class="roster-tag">파일 가져오기 · 조회 전용</span></div>
         <p class="roster-help">MICU 화재대피 앱의 '전체 백업' JSON에서 선택 날짜·D/E/N 근무 간호사 명단만 읽습니다. 별도 인증·서명·처방 확인자 변경은 하지 않습니다.</p>
         <div class="roster-controls">
@@ -142,11 +175,11 @@
           <div id="sheetCase" class="sheet-case"></div>
           <div class="sheet-order-head">
             <h3>Order Manage · 교육용 처방지</h3>
-            <p>처방 작성시각·의사별 묶음. 기존 약물 처방 및 이 화면에서 추가한 가상 처방만 표시합니다.</p>
+            <p>정규·PRN·응급 유형별로 펼쳐 보고, 개별 처방을 선택하면 작성자·시각·원문과 명시된 지시를 확인합니다. 기존 약물처방·이력은 보존됩니다.</p>
             <div id="sheetStatus" class="sheet-status" aria-live="polite"></div>
           </div>
           <div id="sheetTable" class="sheet-table"></div>
-          <p class="sheet-footnote">1일 용량·수량·횟수 등의 정보가 원본 가상 처방에 없다면 계산·추정하지 않고 '미기재'로 표시합니다. 이 표는 실제 처방지, 임상적 투약 지시 또는 학교 평가자료의 복제본이 아닙니다.</p>
+          <p class="sheet-footnote">원본에 없는 투여지시나 1일 용량·수량·횟수를 계산하지 않습니다. 접힌 개별 처방을 열어 현재와 최초 원문을 구별하세요. 이 표는 실제 처방지, 임상적 투약 지시 또는 학교 평가자료의 복제본이 아닙니다.</p>
         </div>
       </section>
       <section class="history-panel" data-page="history" hidden aria-label="가상 의사 처방 변경 이력">

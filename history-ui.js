@@ -22,7 +22,10 @@
     const previous=doctor.value;
     doctor.replaceChildren();
     for(const d of ctx.doctors)doctor.add(new Option(d.prescriber_name+" ("+d.prescriber_id+")",d.prescriber_id));
-    if([...doctor.options].some(o=>o.value===previous))doctor.value=previous;
+    const primary=ctx.profiles?.find(p=>p.patient_id===ctx.patientId)?.primary_physician?.id;
+    if(!refreshSelect.lastPatient||refreshSelect.lastPatient!==ctx.patientId)doctor.value=primary||doctor.value;
+    else if([...doctor.options].some(o=>o.value===previous))doctor.value=previous;
+    refreshSelect.lastPatient=ctx.patientId;
     clock.value=(ctx.simulatedNow||"2026-10-10T10:30:00+09:00").slice(0,16);
   }
   function viewHistory(){
