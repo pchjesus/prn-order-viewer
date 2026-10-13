@@ -99,6 +99,7 @@ async def main():
                 mobile.on("pageerror",lambda e:errors.append(str(e)))
                 await mobile.goto(url,wait_until="networkidle")
                 await mobile.locator('[data-nav="handoff"]').click()
+                await mobile.locator(".kardex-type-fold").first.wait_for(state="attached",timeout=15000)
                 assert await mobile.locator(".kardex-type-fold").count()==3
                 assert not errors, errors
                 print("PASS v0.6.0 Chromium: patient profiles, prescriber defaults, Kardex folds, XLSX parse/store/use/reload/delete, old JSON preserved, mobile.")
