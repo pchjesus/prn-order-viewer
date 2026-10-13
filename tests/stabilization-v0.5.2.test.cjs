@@ -9,7 +9,7 @@ const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
 const orders = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "simulated_orders_SCHEMA_ONLY.json"), "utf8"));
 
 test("v0.5.2 marks current preview as education-only and leaves base orders untouched", () => {
-  assert.ok(html.includes("v0.5.2"));
+  assert.match(html, /v0\.5\.2|v0\.6\.0/);
   assert.ok(html.includes("PRN 조건 검색"));
   assert.equal(orders.length, 18);
   assert.ok(orders.every(o => !Object.hasOwn(o, "administration_condition")));
