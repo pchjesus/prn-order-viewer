@@ -47,9 +47,9 @@
    for(const w of record.warnings){const li=document.createElement("li");li.textContent=w.message;warnings.appendChild(li);}
    if(warnings.children.length)area.appendChild(warnings);
    const date=by("micuRosterDate"),duty=by("micuRosterDuty");
-   const people=M.onDuty(record,date.value,duty.value);
+   const people=M.onDuty(record,date,duty);
    const detail=document.createElement("p");
-   detail.textContent="현재 선택 날짜 "+date.value+" / "+duty.value+" · 근무 인원 "+people.length+"명";
+   detail.textContent="현재 선택 날짜 "+date+" / "+duty+" · 근무 인원 "+people.length+"명";
    area.appendChild(detail);
    const list=document.createElement("ul");
    for(const p of people){const li=document.createElement("li");li.textContent=p.name+" · "+p.group;list.appendChild(li);}
@@ -133,9 +133,9 @@
    const container=$("teachingRosterOnDuty");container.replaceChildren();
    if(!row){container.textContent="사용 중인 PRN 교육용 근무표가 없습니다.";return;}
    const date=by("micuRosterDate"),duty=by("micuRosterDuty");
-   const people=M.onDuty(row,date.value,duty.value);
+   const people=M.onDuty(row,date,duty);
    const head=document.createElement("p");
-   head.textContent="활성 "+row.year+"년 "+row.month+"월 · "+date.value+" "+duty.value+" · "+people.length+"명 · 모의 로그인과 무관";
+   head.textContent="활성 "+row.year+"년 "+row.month+"월 · "+date+" "+duty+" · "+people.length+"명 · 모의 로그인과 무관";
    container.appendChild(head);
    const ul=document.createElement("ul");
    for(const p of people){const li=document.createElement("li");li.textContent=p.name+" · "+p.group;ul.appendChild(li);}
