@@ -13,7 +13,7 @@
 - **Excel 근무표 직접 가져오기**, 시트·행/열 확인, 월별 **저장/사용/삭제** 추가. 합성·허용된 직원 데이터만 PRN 전용 `prnRosterTeachingDB_v1` IndexedDB에 보관; 원본 Excel 파일 자체를 저장하지 않는다.
 - 기존 **MICU 백업 JSON 조회는 유지**하며 PRN 모의 간호사 로그인/열람 확인과 근무표는 연동하지 않는다. 기존 PRN 처방 입력·수정 및 열람 이력은 탭 메모리 상태 유지.
 - 구현 상세와 위험/회귀 범위: [v0.6.0 구현 설계](docs/BALANCED-IMPROVEMENT-v0.6.0.md).
-- 자동검증 통과 여부는 GitHub Actions 실행 결과 확인 후 확정. **실제 nU·실직원·환자 데이터를 입력하지 않는다.**
+**v0.6.0 실제 자동검증:** Node 81/81, 실제 Chromium의 기존·신규 시나리오 모두 통과 ([Actions 38335377309](https://github.com/pchjesus/prn-order-viewer/actions/runs/38335377309)). [개발·검증 보고](docs/TEST-REPORT-v0.6.0.md). 이는 교육용 기술 동작 검증이며 실제 임상 안전성/사용성 검증이 아닙니다. **실제 nU·실직원·환자 데이터를 입력하지 않는다.**
 
 ## 확정된 운영 방향 — PRN 처방 확인 교육용 (2026-10-10)
 

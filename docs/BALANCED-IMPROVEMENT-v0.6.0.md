@@ -43,3 +43,7 @@
 - MICU 구현 참조: `pchjesus/micu-fire-evacuation` `domain/roster-parser.js`, `domain/config.js`, `ui/import-review.js`, `storage.js`. 동일 DB 사용이나 리포지터리 결합 없음.
 - 로컬 SheetJS: MICU 저장소의 `vendor/xlsx.full.min.js`(기존 파일 그대로 복사). 라이브러리 사용조건/보안 검토는 실제 배포 전 별도 확인 필요.
 - 기존 PRN 안정 기준: `docs/PRN-MVP-CLOSEOUT-v0.5.2.md`.
+
+## 최종 실행 검증 (2026-10-13)
+- `2543b0db59a84ae818e9b6711e347f1e12704571`의 [GitHub Actions 38335377309](https://github.com/pchjesus/prn-order-viewer/actions/runs/38335377309): Node 81건·Chromium 기존+신규 브라우저 시나리오 전체 통과.
+- [검증 보고](TEST-REPORT-v0.6.0.md). 사용성/임상 적합성 검증과 구분.

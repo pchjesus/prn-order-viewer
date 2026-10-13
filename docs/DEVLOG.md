@@ -1,5 +1,13 @@
 # DEVLOG
 
+## 2026-10-13 / v0.6.0 최종 실제 자동검증 완료
+
+- 기준 커밋 `2543b0db59a84ae818e9b6711e347f1e12704571`, GitHub Actions [38335377309](https://github.com/pchjesus/prn-order-viewer/actions/runs/38335377309): Node unit/browser 모두 `success`.
+- 실제 Node.js 81/81 통과. Chromium 기존 PRN 회귀 + 신규 v0.6.0 환자·주치의·접이식 Kardex·합성 XLSX 업로드·IndexedDB 저장·사용·복원·삭제·모바일 시나리오 통과.
+- 수정 사항: 구버전 문자열 테스트, Kardex 자동 펼침 테스트, 선택 날짜/근무조 전달 UI 오류, 모바일 비동기 렌더 검사.
+- 실환자/실직원 데이터를 사용하지 않았으며 MICU 원본 근무표·PRN 합성 처방 원본은 보호. 간호사/학습자 사용성 및 임상 안전성은 미검증.
+- 상세: `docs/TEST-REPORT-v0.6.0.md`.
+
 ## 2026-10-13 / v0.6.0 균형 개선형 구현
 
 - 사용자 선택 B안에 따라 교육용 환자 프로필과 주치의/처방자 분리, 접이식 Kardex, Excel 직접 가져오기, 근무표 저장/사용/삭제를 단계별로 구현.
