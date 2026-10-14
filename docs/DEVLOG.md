@@ -1,5 +1,13 @@
 # DEVLOG
 
+## 2026-10-14 / v0.6.1–v0.7.0 후속 설계 착수 (문서만)
+
+- 검토 기준: `main` SHA `9bb4a628649b427ca44ce53929f25c66fc08befd`. 해당 커밋의 [GitHub Actions 38335597285](https://github.com/pchjesus/prn-order-viewer/actions/runs/38335597285) Node/Chromium 성공 확인.
+- `roster-import-config.js`의 Charge 8명/중간년차 6명/나머지 규칙이 교육용 PRN Excel 명단에 선임을 추정하는 문제와 `roster-library-ui.js`의 선택일 중심 미리보기, 누락 날짜 경고 후 저장, 복수 월/다중 탭 미검증을 정적 감사.
+- 다음 단계는 **v0.6.1 오류 예방·근무표/Kardex 안정화**와 **v0.7.0 가상 PRN 확인 교육 시나리오**로 분리 권고.
+- 사용자 선택 필요: 누락 날짜 저장 기준, 중복 이름, 직책 숨김 여부, 접이식 펼침 동작, 교육 모드 방식. 설계 대안·패치 게이트·회귀검증: `docs/NEXT-DESIGN-v0.6.1-v0.7.0.md`.
+- **구현/신규 테스트/실환자 검증 미실시**. 앱 코드·데이터·테스트·IndexedDB 정책 불변. 설계 문서만 반영.
+
 ## 2026-10-13 / v0.6.0 최종 실제 자동검증 완료
 
 - 기준 커밋 `2543b0db59a84ae818e9b6711e347f1e12704571`, GitHub Actions [38335377309](https://github.com/pchjesus/prn-order-viewer/actions/runs/38335377309): Node unit/browser 모두 `success`.
