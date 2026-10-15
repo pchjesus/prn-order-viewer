@@ -13,7 +13,24 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    outputs:
+      tier: ${{ steps.scope.outputs.tier }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - id: scope
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          bash scripts/ci-scope.sh --self-test
+          bash scripts/ci-scope.sh
+
   unit:
+    needs: scope
+    if: needs.scope.outputs.tier == 'full'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,6 +40,8 @@ jobs:
       - name: Run all Node.js regression tests
         run: node --test tests/*.test.cjs
   browser:
+    needs: scope
+    if: needs.scope.outputs.tier != 'docs'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
